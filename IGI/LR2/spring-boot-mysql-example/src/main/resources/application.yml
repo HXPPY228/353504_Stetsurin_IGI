@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver  # Обновлённый драйвер для MySQL 8.0
+    url: jdbc:mysql://localhost:3306/test     # Убедитесь, что порт 3306 открыт и MySQL запущена
+    username: root                           # Замените на имя пользователя MySQL (например, root)
+    password: 1234                      # Замените на пароль, который вы установили для пользователя root
+  jpa:
+    hibernate.ddl-auto: update               # Создаёт или обновляет схему базы данных
+    generate-ddl: true                       # Генерирует DDL для базы
+    show-sql: true                           # Показывает SQL-запросы в консоли (полезно для отладки)
