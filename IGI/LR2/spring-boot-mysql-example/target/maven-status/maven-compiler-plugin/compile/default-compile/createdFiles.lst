@@ -1,0 +1,4 @@
+com\techprimers\db\repository\UsersRepository.class
+com\techprimers\db\SpringBootMysqldbApplication.class
+com\techprimers\db\resource\UsersResource.class
+com\techprimers\db\model\Users.class
