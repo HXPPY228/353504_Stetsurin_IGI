@@ -1,5 +1,5 @@
 # func for ln(1-x)
-# Task1
+# Task1 24
 # Stetsurin Elisey 353504
 # 23.03.2025
 

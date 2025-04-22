@@ -1,11 +1,11 @@
 # input metods for task2
-# Task2
+# Task2 24
 # Stetsurin Elisey 353504
 # 23.03.2025
 
 import random
 
-def generate_random_list(size):
+def generate_random_list(size,min=1,max=30):
     """
     Generates a list of random integers.
     
@@ -20,7 +20,8 @@ def generate_random_list(size):
     """
     if size <= 0:
         raise ValueError("Размер должен быть положительным целым числом")
-    return [random.randint(1, 30) for _ in range(size)]
+    for _ in range(size):
+        yield random.randint(min, max)
 
 def user_input_list():
     """

@@ -1,4 +1,4 @@
-# logic for task3 & task4
+# logic for task3 & task4 24
 # Stetsurin Elisey 353504
 # 23.03.2025
 

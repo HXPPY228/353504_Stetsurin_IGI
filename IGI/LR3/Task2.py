@@ -1,5 +1,5 @@
 # main task2
-# Task2
+# Task2 24
 # Stetsurin Elisey 353504
 # 23.03.2025
 
@@ -33,7 +33,7 @@ def run_task2():
         try:
             if choice == '1':
                 size = int(input("Введите размер списка: "))
-                numbers = generate_random_list(size)
+                numbers = list(generate_random_list(size))
                 print(f"Сгенерированный список: {numbers}")
             elif choice == '2':
                 numbers = user_input_list()
