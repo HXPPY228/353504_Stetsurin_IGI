@@ -4,7 +4,7 @@ from task4.utils import get_positive_int, continue_program
 
 def main():
     """Main function to run the matrix operations program."""
-    print("Welcome to the NumPy Matrix Operations Program (Lab 5)")
+    print("Welcome to the NumPy Matrix Operations Program")
     while True:
         try:
             # Get matrix dimensions from user

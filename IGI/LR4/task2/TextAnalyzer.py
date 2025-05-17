@@ -16,7 +16,7 @@ class TextAnalyzer:
     
     def _split_sentences(self):
         """Split the text into sentences using regular expressions."""
-        sentence_pattern = r'(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s'
+        sentence_pattern = r'(?<=[.!?])\s+'
         return [s.strip() for s in re.split(sentence_pattern, self.text) if s.strip()]
     
     def _split_words(self):

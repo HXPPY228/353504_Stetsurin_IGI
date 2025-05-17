@@ -1,17 +1,18 @@
 import csv
 import pickle
 from task1.student import Student
+from abc import ABC, abstractmethod
 
-class Serializer:
+class Serializer(ABC):
     """Abstract base class for serializers."""
-    
+    @abstractmethod
     def save(self, students, filename):
         """Save students to a file."""
-        raise NotImplementedError("Subclasses must implement save()")
-
+        pass
+    @abstractmethod
     def load(self, filename):
         """Load students from a file."""
-        raise NotImplementedError("Subclasses must implement load()")
+        pass
 
 class CSVSerializer(Serializer):
     """Serializer for CSV format."""

@@ -1,0 +1,31 @@
+Всего предложений: 13
+Повествовательные предложения: 9
+Вопросительные предложения: 2
+Повелительные предложения: 2
+Средняя длина предложения: 21.54 символов
+Средняя длина слова: 4.12 символов
+Количество смайликов: 3
+Слова, начинающиеся с маленькой буквы: world, is, the, first, sentence, are, you, please, narrative, sentence, is, a, smiley, another, one, you, tomorrow, okay, banana, cherry, dog, egg, cool, mood, happy, kitten, with, double, letters, book, apple, happy, dog, address, aE, dC, cA, and, invalid, one, words, kite, lion, moon, sun
+Знаки препинания: ,, !, ., ?, :, -, ), !, ., :, ;, -, -, -, ), ), ), ., :, :, -, [, [, [, ., ,, ?, ., ., :, ,, ,, ,, ., :, :, :, :, :, :, :, :, :, :, ., :, ,, ,, ,, ,, .
+Слова, начинающиеся с согласной: 42
+Слова с двойными буквами:
+  Позиция 0: Hello
+  Позиция 13: narrative
+  Позиция 22: See
+  Позиция 24: tomorrow
+  Позиция 26: Apple
+  Позиция 28: cherry
+  Позиция 30: egg
+  Позиция 31: cool
+  Позиция 32: mood
+  Позиция 33: happy
+  Позиция 34: kitten
+  Позиция 38: letters
+  Позиция 39: book
+  Позиция 40: apple
+  Позиция 41: happy
+  Позиция 45: address
+  Позиция 63: Zoo
+  Позиция 66: moon
+Слова в алфавитном порядке:
+01, 23, 45, 54, 56, 67, 76, 89, a, address, aE, And, and, Another, another, Apple, apple, are, Az, banana, book, cA, Check, cherry, cool, dC, dog, dog, double, egg, first, happy, happy, Hello, Here, How, invalid, is, is, kite, kitten, letters, lion, MAC, mood, moon, More, narrative, okay, one, one, please, See, sentence, sentence, Smile, smiley, sun, the, This, tomorrow, with, Words, words, world, you, you, Zoo

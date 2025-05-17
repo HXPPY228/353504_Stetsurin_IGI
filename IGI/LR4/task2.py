@@ -126,7 +126,7 @@ def main():
                 if archive_info:
                     print("\nСодержимое архива:")
                     for info in archive_info:
-                        print(f"  {info.filename} - {info.file_size} байт")
+                        print(f"  {info.filename} - {info.file_size} байт, Date: {info.date_time}, {info.compress_type}, {info.compress_size}")
         
         elif choice == "13":
             print("Выход из программы.")
