@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Кондитерская{% endblock %}</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="{% url 'shop:product_list' %}">Главная</a> |
+      <a href="{% url 'shop:order_create' %}">Сделать заказ</a> |
+      <a href="/admin/">Админка</a>
+    </nav>
+    <hr>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <hr>
+    <p>© Кондитерская Хеппи</p>
+  </footer>
+</body>
+</html>

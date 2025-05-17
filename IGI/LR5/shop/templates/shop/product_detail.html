@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ object.name }} — детали{% endblock %}
+
+{% block content %}
+  <h1>{{ object.name }}</h1>
+  <p><strong>Код товара:</strong> {{ object.code }}</p>
+  <p><strong>Тип:</strong> {{ object.product_type.name }}</p>
+  <p><strong>Цена:</strong> {{ object.price }} ₽</p>
+  <p><strong>Статус:</strong>
+    {% if object.in_production %}В наличии{% else %}Нет в наличии{% endif %}
+  </p>
+  <p><a href="{% url 'shop:order_create' %}">Сделать заказ</a></p>
+{% endblock %}

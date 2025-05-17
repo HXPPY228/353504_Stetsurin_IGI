@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Оформление заказа{% endblock %}
+
+{% block content %}
+  <h1>Оформление нового заказа</h1>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div>
+      {{ form.client.label_tag }}<br>
+      {{ form.client }}
+    </div>
+
+    <h2>Состав заказа</h2>
+    {{ items.management_form }}
+    <table>
+      <tr>
+        <th>Продукт</th>
+        <th>Кол-во</th>
+      </tr>
+      {% for f in items.forms %}
+        <tr>
+          <td>{{ f.product }}</td>
+          <td>{{ f.quantity }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <button type="submit">Оформить</button>
+  </form>
+{% endblock %}
