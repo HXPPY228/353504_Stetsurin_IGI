@@ -1,7 +1,11 @@
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
-from .models import Product, ProductType, Order
+from .models import Product, ProductType, Order, Client
 from .forms import OrderForm
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 class ProductListView(ListView):
     model = Product
@@ -57,7 +61,8 @@ class ProductListView(ListView):
 class ProductDetailView(DetailView):
     model = Product
 
-class OrderCreateView(CreateView):
+class OrderCreateView(LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy('login')
     model = Order
     form_class = OrderForm
     template_name = 'shop/order_create.html'
@@ -70,12 +75,16 @@ class OrderCreateView(CreateView):
         return data
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        items = context['items']
+        client, created = Client.objects.get_or_create(
+            user=self.request.user
+        )
         self.object = form.save(commit=False)
+        self.object.client = client
+        self.object.total_price = 0
+        self.object.save()
+
+        items = self.get_context_data()['items']
         if items.is_valid():
-            self.object.total_price = 0
-            self.object.save()
             items.instance = self.object
             items.save()
             # пересчёт суммы
@@ -85,3 +94,16 @@ class OrderCreateView(CreateView):
             return super().form_valid(form)
         else:
             return self.form_invalid(form)
+
+class SignUpView(CreateView):
+    form_class = UserCreationForm
+    template_name = 'registration/signup.html'
+    success_url = reverse_lazy('login')
+    
+class MyOrdersView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'shop/my_orders.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Order.objects.filter(client__user=self.request.user)

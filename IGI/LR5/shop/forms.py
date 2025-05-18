@@ -8,13 +8,13 @@ class OrderItemForm(forms.ModelForm):
 
 OrderItemFormSet = forms.inlineformset_factory(
     Order, OrderItem, form=OrderItemForm,
-    extra=1, can_delete=False
+    extra=5, can_delete=False
 )
 
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ('client',)
+        fields = ()
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

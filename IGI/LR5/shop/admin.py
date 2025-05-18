@@ -15,15 +15,22 @@ class ProductAdmin(admin.ModelAdmin):
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
-    extra = 1
+    extra = 0
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display  = ('id','client','created_at','total_price')
-    inlines       = (OrderItemInline,)
     readonly_fields = ('total_price',)
+    inlines = [OrderItemInline]
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display  = ('first_name','last_name','email','phone')
-    search_fields = ('first_name','last_name','email')
+    list_display = ('full_name', 'email', 'phone')
+    search_fields = ('user__first_name', 'user__last_name', 'user__email')
+
+    def full_name(self, obj):
+        return obj.user.get_full_name() or obj.user.username
+
+    def email(self, obj):
+        return obj.user.email
+
