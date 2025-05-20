@@ -19,4 +19,6 @@ urlpatterns = [
     re_path(r'^promocodes/$', views.PromoListView.as_view(), name='promocodes'),
     re_path(r'^reviews/$', views.ReviewListView.as_view(), name='reviews'),
     re_path(r'^reviews/new/$', views.ReviewCreateView.as_view(), name='review_create'),
+    re_path(r'^stats/$', views.StatsView.as_view(), name='stats'),
+    re_path(r'^time/$', views.TimeInfoView.as_view(), name='time_info'),
 ]

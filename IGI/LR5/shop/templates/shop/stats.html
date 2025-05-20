@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Статистика{% endblock %}
+
+{% block content %}
+<h1>Статистика магазина</h1>
+
+<h2>1. Клиенты и товары в алфавитном порядке</h2>
+<p><strong>Всего продаж:</strong> {{ total_sales }} ₽</p>
+
+<h3>Клиенты:</h3>
+<ul>
+  {% for c in clients_list %}
+    <li>
+      {{ c.user.username }}
+    </li>
+  {% empty %}
+    <li>Нет клиентов.</li>
+  {% endfor %}
+</ul>
+
+<h3>Товары:</h3>
+<ul>
+  {% for p in products_list %}
+    <li>
+      {{ p.name }} — {{ p.price }} ₽
+    </li>
+  {% empty %}
+    <li>Нет товаров.</li>
+  {% endfor %}
+</ul>
+
+<h2>2. Статистика по сумме продаж</h2>
+<p>Среднее: {{ sales_mean }} ₽</p>
+<p>Медиана: {{ sales_median }} ₽</p>
+<p>Мода: {{ sales_mode }} ₽</p>
+
+<h2>3. Статистика по возрасту клиентов</h2>
+{% if ages_mean != None %}
+  <p>Средний возраст: {{ ages_mean }} лет</p>
+  <p>Медианный возраст: {{ ages_median }} лет</p>
+{% else %}
+  <p>Нет данных о возрасте клиентов.</p>
+{% endif %}
+
+<h2>4. Наиболее популярный тип товаров</h2>
+{% if most_popular_type %}
+  <p>{{ most_popular_type }} — {{ most_popular_count }} позиций заказано</p>
+{% else %}
+  <p>Нет данных.</p>
+{% endif %}
+
+<h2>5. Тип товаров с наибольшей прибылью</h2>
+{% if best_profit_type %}
+  <p>{{ best_profit_type }} — {{ best_profit_sum }} ₽</p>
+{% else %}
+  <p>Нет данных.</p>
+{% endif %}
+{% endblock %}

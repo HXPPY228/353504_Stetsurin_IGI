@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Информация о времени{% endblock %}
+
+{% block content %}
+  <h1>Информация о времени</h1>
+
+  <h2>Текущие дата и время</h2>
+  <p><strong>Тайм‑зона:</strong> {{ tz_name }}</p>
+  <p><strong>Local:</strong> {{ now_local }}</p>
+  <p><strong>UTC:</strong>   {{ now_utc }}</p>
+
+  <h2>Примеры дат из БД</h2>
+  {% if article %}
+    <h3>Последняя статья “{{ article.title }}”</h3>
+    <p>Local: {{ article_local }}</p>
+    <p>UTC:   {{ article_utc }}</p>
+  {% endif %}
+
+  {% if order %}
+    <h3>Последний заказ №{{ order.id }}</h3>
+    <p>Local: {{ order_local }}</p>
+    <p>UTC:   {{ order_utc }}</p>
+  {% endif %}
+
+  {% if review %}
+    <h3>Последний отзыв ID {{ review.id }}</h3>
+    <p>Local: {{ review_local }}</p>
+    <p>UTC:   {{ review_utc }}</p>
+  {% endif %}
+
+  <h2>Календарь (текстовый) на {{ now_local|slice:":2" }}/{{ now_local|slice:"3:5" }}/{{ now_local|slice:"6:10" }}</h2>
+  <pre style="font-family: monospace;">{{ calendar_text }}</pre>
+{% endblock %}

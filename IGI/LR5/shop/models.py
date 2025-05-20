@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.conf import settings
+from datetime import date
 
 class ProductType(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -32,6 +33,8 @@ class Client(models.Model):
         on_delete=models.SET_NULL,
         related_name='clients_assigned'
     )
+    
+    birth_date  = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.user.get_full_name() or self.user.username
