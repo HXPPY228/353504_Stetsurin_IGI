@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+  <h1>Новости</h1>
+  <ul>
+    {% for article in articles %}
+      <li style="margin-bottom:1em;">
+        <h2>{{ article.title }}</h2>
+        <p><em>{{ article.published_at|date:"d.m.Y" }}</em></p>
+        <img src="/media/news_images/strength.png" width="200">
+        <p>{{ article.teaser }}</p>
+      </li>
+    {% empty %}
+      <li>Пока нет новостей.</li>
+    {% endfor %}
+  </ul>
+  {% if is_paginated %}
+    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+  {% endif %}
+{% endblock %}

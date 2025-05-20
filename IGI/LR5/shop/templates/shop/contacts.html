@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Контакты{% endblock %}
+
+{% block content %}
+  <h1>Контакты</h1>
+  <div style="display:flex; flex-wrap:wrap;">
+    {% for c in contacts %}
+      <div style="border:1px solid #ccc; padding:1em; margin:0.5em; width:300px;">
+        <img src="/media/contacts/mb3.png" width="300">
+        <h3>{{ c.name }}</h3>
+        <p>{{ c.role }}</p>
+        {% if c.phone %}<p>📞 {{ c.phone }}</p>{% endif %}
+        {% if c.email %}<p>✉️ {{ c.email }}</p>{% endif %}
+      </div>
+    {% empty %}
+      <p>Нет контактных лиц.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

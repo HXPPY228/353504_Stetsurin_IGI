@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+  <h1>Последняя статья</h1>
+  {% if latest %}
+    <h2>{{ latest.title }}</h2>
+    <p>{{ latest.teaser }}</p>
+  {% else %}
+    <p>Пока нет статей.</p>
+  {% endif %}
+
+  <hr>
+
+  <h2>Цитата из «Во все тяжкие»</h2>
+  <blockquote>
+    “{{ bb_quote.quote }}”
+    {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
+  </blockquote>
+
+  <hr>
+
+  <h2>Случайная шутка</h2>
+  <blockquote>
+  <p>{{ joke.setup }}</p>
+  <p>{{ joke.punchline }}</p>
+  </blockquote>
+{% endblock %}

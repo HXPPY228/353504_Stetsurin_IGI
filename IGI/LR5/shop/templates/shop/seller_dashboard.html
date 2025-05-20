@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load math_filters %}
+{% block title %}Панель продавца{% endblock %}
+
+{% block content %}
+  <h1>Панель продавца</h1>
+
+  <h2>Ваши клиенты</h2>
+  {% if clients %}
+    <ul>
+      {% for client in clients %}
+        <li>{{ client.user.get_full_name }} ({{ client.user.email }})</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Нет назначенных клиентов.</p>
+  {% endif %}
+
+  <h2>Заказы клиентов</h2>
+  {% if orders %}
+    {% for order in orders %}
+      <div style="border:1px solid #ccc; padding:1em; margin-bottom:1em;">
+        <h3>Заказ №{{ order.id }} от {{ order.created_at|date:"d.m.Y H:i" }}</h3>
+        <p><strong>Клиент:</strong> {{ order.client }}</p>
+        <p><strong>Сумма:</strong> {{ order.total_price }} ₽</p>
+
+        <table border="1" cellpadding="4" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th>Товар</th>
+              <th>Кол-во</th>
+              <th>Цена шт.</th>
+              <th>Сумма</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <td>{{ item.product.name }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>{{ item.product.price }} ₽</td>
+              <td>{{ item.quantity|mul:item.product.price }} ₽</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+
+    <p><strong>Итого продаж:</strong> {{ total_sales }} ₽</p>
+  {% else %}
+    <p>Нет заказов от ваших клиентов.</p>
+  {% endif %}
+{% endblock %}

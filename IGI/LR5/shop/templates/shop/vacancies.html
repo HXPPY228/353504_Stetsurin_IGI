@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Вакансии{% endblock %}
+
+{% block content %}
+  <h1>Вакансии</h1>
+  <ul>
+    {% for v in vacancies %}
+      <li>
+        <h2>{{ v.title }}</h2>
+        <p><small>Опубликовано: {{ v.posted_at|date:"d.m.Y" }}</small></p>
+        <p>{{ v.description }}</p>
+      </li>
+    {% empty %}
+      <li>Пока нет открытых вакансий.</li>
+    {% endfor %}
+  </ul>
+  {% if is_paginated %}
+    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+  {% endif %}
+{% endblock %}

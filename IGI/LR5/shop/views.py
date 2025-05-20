@@ -1,11 +1,12 @@
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
-from .models import Product, ProductType, Order, Client
-from .forms import OrderForm
+from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review
+from .forms import OrderForm, ReviewForm
 from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import TemplateView
+from django.db.models import Sum
+import requests
 
 class ProductListView(ListView):
     model = Product
@@ -107,3 +108,112 @@ class MyOrdersView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Order.objects.filter(client__user=self.request.user)
+    
+class SellerRequiredMixin(UserPassesTestMixin):
+    """Доступно только пользователям со статусом staff"""
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    login_url = reverse_lazy('login')
+    
+class SellerDashboardView(SellerRequiredMixin, TemplateView):
+    template_name = 'shop/seller_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # клиенты, назначенные этому продавцу
+        clients = user.clients_assigned.all()
+        # заказы этих клиентов
+        orders  = Order.objects.filter(client__in=clients).order_by('-created_at')
+
+        ctx['clients'] = clients
+        ctx['orders']  = orders
+        ctx['total_sales'] = orders.aggregate(
+            total=Sum('total_price')
+        )['total'] or 0
+        return ctx
+    
+class HomeView(TemplateView):
+    template_name = 'shop/home.html'
+
+    def get_context_data(self, **ctx):
+        ctx = super().get_context_data(**ctx)
+        # Последняя статья
+        ctx['latest'] = Article.objects.order_by('-published_at').first()
+
+        # 1) Breaking Bad Quote
+        try:
+            resp = requests.get('https://api.breakingbadquotes.xyz/v1/quotes')
+            resp.raise_for_status()
+            data = resp.json()
+            # API возвращает список из одного объекта
+            ctx['bb_quote'] = data[0]  
+        except Exception:
+            ctx['bb_quote'] = {'quote': 'Не удалось получить цитату.', 'author': ''}
+
+        # 2) Случайный шутка из Official Joke API
+        try:
+            resp2 = requests.get('https://official-joke-api.appspot.com/jokes/random')
+            resp2.raise_for_status()
+            ctx['joke'] = resp2.json()
+        except Exception:
+            ctx['joke'] = {'setup': 'Не удалось получить шутку.', 'punchline': ''}
+
+        return ctx
+
+class AboutView(ListView):
+    model = CompanyInfo
+    template_name = 'shop/about.html'
+    context_object_name = 'timeline'
+
+class NewsListView(ListView):
+    model = Article
+    template_name = 'shop/news_list.html'
+    context_object_name = 'articles'
+    paginate_by = 10
+
+class GlossaryListView(ListView):
+    model = GlossaryTerm
+    template_name = 'shop/glossary.html'
+    context_object_name = 'terms'
+
+class ContactListView(ListView):
+    model = Contact
+    template_name = 'shop/contacts.html'
+    context_object_name = 'contacts'
+
+class PrivacyView(TemplateView):
+    template_name = 'shop/privacy.html'
+
+class VacancyListView(ListView):
+    model = Vacancy
+    template_name = 'shop/vacancies.html'
+    context_object_name = 'vacancies'
+
+class PromoListView(ListView):
+    model = PromoCode
+    template_name = 'shop/promocodes.html'
+    context_object_name = 'promocodes'
+
+class ReviewListView(ListView):
+    model = Review
+    template_name = 'shop/reviews.html'
+    context_object_name = 'reviews'
+    paginate_by = 10
+
+class ReviewCreateView(LoginRequiredMixin, CreateView):
+    model = Review
+    form_class = ReviewForm
+    template_name = 'shop/review_form.html'
+    success_url = reverse_lazy('shop:reviews')
+    login_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.name = (
+            self.request.user.get_full_name() or 
+            self.request.user.username
+        )
+        return super().form_valid(form)
