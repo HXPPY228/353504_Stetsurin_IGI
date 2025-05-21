@@ -12,17 +12,23 @@
 
   <hr>
 
-  <h2>Цитата из «Во все тяжкие»</h2>
-  <blockquote>
-    “{{ bb_quote.quote }}”
-    {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
-  </blockquote>
+  {% if user.is_authenticated %}
+    <h2>Цитата из «Во все тяжкие»</h2>
+    <blockquote>
+      “{{ bb_quote.quote }}”
+      {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
+    </blockquote>
 
-  <hr>
+    <hr>
 
-  <h2>Случайная шутка</h2>
-  <blockquote>
-  <p>{{ joke.setup }}</p>
-  <p>{{ joke.punchline }}</p>
-  </blockquote>
+    <h2>Случайная шутка</h2>
+    <blockquote>
+    <p>{{ joke.setup }}</p>
+    <p>{{ joke.punchline }}</p>
+    </blockquote>
+  {% else %}
+    <p><a href="{% url 'login' %}?next={% url 'shop:home' %}">
+      Войдите, чтобы получить цитаты и шутки
+    </a></p>
+  {% endif %}
 {% endblock %}

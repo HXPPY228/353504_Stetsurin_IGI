@@ -55,4 +55,8 @@
 {% else %}
   <p>Нет данных.</p>
 {% endif %}
+
+<h2>6. График выручки по типам</h2>
+<p><img src="{% url 'shop:stats_chart' %}" alt="График выручки"/></p>
+
 {% endblock %}

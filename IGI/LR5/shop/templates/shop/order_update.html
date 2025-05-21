@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Редактировать заказ №{{ order.id }}{% endblock %}
+{% block content %}
+  <h1>Редактировать заказ №{{ order.id }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+
+    {{ formset.management_form }}
+    {{ formset.non_form_errors }}
+    <table>
+        <tr><th>Продукт</th><th>Количество</th><th>Удалить</th></tr>
+        {% for f in formset.forms %}
+          <tr>
+            <td>{{ f.id }} {{ f.product }} {{ f.product.errors }}</td>
+            <td>{{ f.quantity }} {{ f.quantity.errors }}</td>
+            <td>{{ f.DELETE }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+    <button type="submit">Сохранить</button>
+    <a href="{% url 'shop:my_orders' %}">Отмена</a>
+  </form>
+{% endblock %}

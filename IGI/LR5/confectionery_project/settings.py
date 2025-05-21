@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import logging
+import logging.config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+LOG_LEVEL = os.getenv('DJANGO_LOG_LEVEL', 'INFO').upper()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -130,3 +133,48 @@ LOGIN_REDIRECT_URL = '/'
 
 # после логаута — тоже на главную
 LOGOUT_REDIRECT_URL = '/'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} {name} {module}:{lineno} — {message}',
+            'style': '{',
+            'datefmt': '%d/%m/%Y %H:%M:%S'
+        },
+        'simple': {
+            'format': '[{levelname}] {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'shop.log'),
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+    },
+    'loggers': {
+        # Логгер для вашего приложения
+        'shop': {
+            'handlers': ['console', 'file'],
+            'level': LOG_LEVEL,
+            'propagate': False,
+        },
+        # Чтобы тоже видеть предупреждения Django
+        'django': {
+            'handlers': ['console'],
+            'level': LOG_LEVEL,
+        },
+    }
+}
+
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)

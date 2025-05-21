@@ -1,10 +1,10 @@
-from django.views.generic import ListView, DetailView, CreateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView, View
+from django import forms
 from django.urls import reverse_lazy
 from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem
-from .forms import OrderForm, ReviewForm, SignUpForm
-from django.contrib.auth.forms import UserCreationForm
+from .forms import OrderForm, ReviewForm, SignUpForm, OrderItemFormSet
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F
+from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q
 import requests
 from statistics import mean, median, multimode
 from datetime import date
@@ -12,56 +12,39 @@ from django.utils import timezone
 import calendar
 import pytz
 from django.contrib.auth import get_user_model
+import matplotlib.pyplot as plt
+import io
+from django.http import HttpResponse
+import logging
+
+logger = logging.getLogger('shop')
 
 class ProductListView(ListView):
     model = Product
     paginate_by = 10
+    template_name = 'shop/product_list.html'
+    context_object_name = 'products'
 
     def get_queryset(self):
-        qs = super().get_queryset()
-        # если в базе ещё нет ни одного продукта — создаём набор образцов
-        if not qs.exists():
-            samples = {
-                'Кексы': [
-                    ('CK001', 'Ванильный кекс', 60),
-                    ('CK002', 'Шоколадный кекс', 70),
-                    ('CK003', 'Клубничный кекс', 65),
-                ],
-                'Пирожные': [
-                    ('PA001', 'Эклер со сливками', 80),
-                    ('PA002', 'Профитроли', 75),
-                    ('PA003', 'Картошка (пирожное)', 50),
-                ],
-                'Торты': [
-                    ('TC001', 'Торт «Наполеон»', 500),
-                    ('TC002', 'Чизкейк', 450),
-                    ('TC003', 'Фруктовый торт', 550),
-                ],
-                'Печенья': [
-                    ('CKG001', 'Шоколадное печенье', 40),
-                    ('CKG002', 'Овсяное печенье', 45),
-                    ('CKG003', 'Ванильное печенье', 35),
-                ],
-                'Пироги': [
-                    ('PIE001', 'Яблочный пирог', 120),
-                    ('PIE002', 'Вишнёвый пирог', 130),
-                ],
-            }
-            # создаём типы и продукты
-            for type_name, items in samples.items():
-                pt, _ = ProductType.objects.get_or_create(
-                    name=type_name,
-                    defaults={'description': f'Вкусные изделия категории «{type_name}»'}
-                )
-                for code, name, price in items:
-                    Product.objects.create(
-                        code=code,
-                        name=name,
-                        product_type=pt,
-                        price=price,
-                        in_production=True
-                    )
-            qs = super().get_queryset()
+        qs = super().get_queryset().select_related('product_type')
+
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            qs = qs.filter(
+                Q(name__icontains=q) |
+                Q(code__icontains=q) |
+                Q(product_type__name__icontains=q)
+            )
+
+        sort = self.request.GET.get('sort', 'name')
+        if sort in ('name', 'price', 'product_type'):
+            if sort == 'product_type':
+                qs = qs.order_by('product_type__name')
+            else:
+                qs = qs.order_by(sort)
+        else:
+            qs = qs.order_by('name')
+
         return qs
 
 class ProductDetailView(DetailView):
@@ -97,9 +80,64 @@ class OrderCreateView(LoginRequiredMixin, CreateView):
             total = sum(i.product.price * i.quantity for i in self.object.items.all())
             self.object.total_price = total
             self.object.save()
+            
+            logger.info(
+                "New order #%s created by user %s (client_id=%s)",
+                self.object.id,
+                self.request.user.username,
+                client.id
+            )
+            
             return super().form_valid(form)
         else:
             return self.form_invalid(form)
+        
+class OrderOwnerMixin(LoginRequiredMixin):
+    """Ограничивает доступ к заказам только их владельцу (клиенту)."""
+    def get_queryset(self):
+        client = self.request.user.client_profile
+        return super().get_queryset().filter(client=client)
+    
+class OrderUpdateView(OrderOwnerMixin, UpdateView):
+    model = Order
+    form_class = OrderForm
+    template_name = 'shop/order_update.html'
+    success_url = reverse_lazy('shop:my_orders')
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        if self.request.POST:
+            data['formset'] = OrderItemFormSet(self.request.POST, instance=self.object)
+        else:
+            data['formset'] = OrderItemFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            # Пересчёт общей суммы
+            total = sum(item.product.price * item.quantity for item in self.object.items.all())
+            self.object.total_price = total
+            self.object.save()
+            
+            logger.info(
+                "Order #%s updated by user %s", 
+                self.object.id, 
+                self.request.user.username
+            )
+            
+            return super().form_valid(form)
+        else:
+            return self.form_invalid(form)
+    
+class OrderDeleteView(OrderOwnerMixin, DeleteView):
+    model = Order
+    template_name = 'shop/order_confirm_delete.html'
+    success_url = reverse_lazy('shop:my_orders')
 
 class SignUpView(CreateView):
     form_class = SignUpForm
@@ -162,23 +200,30 @@ class HomeView(TemplateView):
         ctx = super().get_context_data(**ctx)
         ctx['latest'] = Article.objects.order_by('-published_at').first()
 
+        if self.request.user.is_authenticated:
         # 1) Breaking Bad Quote
-        try:
-            resp = requests.get('https://api.breakingbadquotes.xyz/v1/quotes')
-            resp.raise_for_status()
-            data = resp.json()
-            ctx['bb_quote'] = data[0]  
-        except Exception:
-            ctx['bb_quote'] = {'quote': 'Не удалось получить цитату.', 'author': ''}
+            try:
+                resp = requests.get('https://api.breakingbadquotes.xyz/v1/quotes')
+                resp.raise_for_status()
+                data = resp.json()
+                ctx['bb_quote'] = data[0]  
+            except Exception as e:
+                logger.error("Error getting BB Quote: %s", e, exc_info=True)
+                ctx['bb_quote'] = {'quote': 'Не удалось получить цитату.', 'author': ''}
 
-        # 2) Случайный шутка
-        try:
-            resp2 = requests.get('https://official-joke-api.appspot.com/jokes/random')
-            resp2.raise_for_status()
-            ctx['joke'] = resp2.json()
-        except Exception:
-            ctx['joke'] = {'setup': 'Не удалось получить шутку.', 'punchline': ''}
-
+            # 2) Случайный шутка
+            try:
+                resp2 = requests.get('https://official-joke-api.appspot.com/jokes/random')
+                resp2.raise_for_status()
+                ctx['joke'] = resp2.json()
+            except Exception as e:
+                logger.error("Error getting joke: %s", e, exc_info=True)
+                ctx['joke'] = {'setup': 'Не удалось получить шутку.', 'punchline': ''}
+        else:
+            # Для анонимов — показываем приглашение войти
+            ctx['bb_quote'] = None
+            ctx['joke']    = None
+            
         return ctx
 
 class AboutView(ListView):
@@ -352,3 +397,37 @@ class TimeInfoView(TemplateView):
         ctx['calendar_text'] = cal.formatmonth(today.year, today.month)
 
         return ctx
+
+class SalesByTypeChartView(View):
+    def get(self, request, *args, **kwargs):
+        # Собираем данные: для каждого типа товаров суммарную выручку
+        qs = (
+            OrderItem.objects
+            .values(type_name=F('product__product_type__name'))
+            .annotate(
+                revenue=Sum(
+                    ExpressionWrapper(
+                        F('quantity') * F('product__price'),
+                        output_field=DecimalField()
+                    )
+                )
+            )
+            .order_by('type_name')
+        )
+
+        types = [row['type_name'] for row in qs]
+        revenues = [float(row['revenue']) for row in qs]
+
+        plt.figure(figsize=(8,4))
+        plt.bar(range(len(types)), revenues)
+        plt.xticks(range(len(types)), types, rotation=45, ha='right')
+        plt.ylabel('Выручка, ₽')
+        plt.title('Выручка по типам товаров')
+        plt.tight_layout()
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        plt.close()
+
+        buf.seek(0)
+        return HttpResponse(buf.getvalue(), content_type='image/png')

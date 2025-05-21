@@ -25,6 +25,10 @@
               </tr>
             {% endfor %}
           </table>
+          <p style="margin-top:0.5em;">
+            <a href="{% url 'shop:order_update' pk=order.pk %}">Изменить</a> |
+            <a href="{% url 'shop:order_delete' pk=order.pk %}">Удалить</a>
+          </p>
         </li>
       {% endfor %}
     </ul>

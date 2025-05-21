@@ -1,5 +1,6 @@
 from django import forms
 from .models import Order, OrderItem, Review
+from django.forms.models import BaseInlineFormSet, inlineformset_factory
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from datetime import date
@@ -26,15 +27,34 @@ class OrderForm(forms.ModelForm):
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ('rating','text')
-        
+        fields = ('rating', 'text')
+        widgets = {
+            'rating': forms.NumberInput(attrs={
+                'min': 1,
+                'max': 5,
+                'required': True,
+                'placeholder': '1–5',
+            }),
+            'text': forms.Textarea(attrs={
+                'required': True,
+                'rows': 4,
+                'placeholder': 'Ваш отзыв…',
+            }),
+        }
+
     def clean_rating(self):
         rating = self.cleaned_data.get('rating')
         if rating is None:
-            return rating
-        if rating > 5:
-            raise ValidationError('Рейтинг должен быть от 0 до 5.')
+            raise ValidationError('Укажите оценку.')
+        if rating < 1 or rating > 5:
+            raise ValidationError('Рейтинг должен быть от 1 до 5.')
         return rating
+
+    def clean_text(self):
+        text = self.cleaned_data.get('text', '').strip()
+        if not text:
+            raise ValidationError('Текст отзыва не может быть пустым.')
+        return text
     
 PHONE_REGEX = r'^\+375\s\(29\)\s\d{3}-\d{2}-\d{2}$'
 
@@ -59,3 +79,12 @@ class SignUpForm(UserCreationForm):
         if age < 18:
             raise ValidationError("Вам должно быть не менее 18 лет.")
         return bd
+    
+class OrderItemBaseFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.forms:
+            # пусть полностью пустые строки не блокируют сохранение
+            form.empty_permitted = True
+
+OrderItemFormSet = inlineformset_factory(Order, OrderItem, fields=('product', 'quantity'), extra=1, can_delete=True)

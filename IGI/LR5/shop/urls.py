@@ -8,6 +8,8 @@ urlpatterns = [
     re_path(r'^products/$', views.ProductListView.as_view(), name='product_list'),
     re_path(r'^products/(?P<pk>\d+)/$', views.ProductDetailView.as_view(), name='product_detail'),
     re_path(r'^order/new/$', views.OrderCreateView.as_view(), name='order_create'),
+    re_path(r'^order/(?P<pk>\d+)/edit/$', views.OrderUpdateView.as_view(), name='order_update'),
+    re_path(r'^order/(?P<pk>\d+)/delete/$', views.OrderDeleteView.as_view(), name='order_delete'),
     re_path(r'^orders/$', views.MyOrdersView.as_view(), name='my_orders'),
     re_path(r'^dashboard/$', views.SellerDashboardView.as_view(), name='seller_dashboard'),
     re_path(r'^about/$', views.AboutView.as_view(), name='about'),
@@ -20,5 +22,6 @@ urlpatterns = [
     re_path(r'^reviews/$', views.ReviewListView.as_view(), name='reviews'),
     re_path(r'^reviews/new/$', views.ReviewCreateView.as_view(), name='review_create'),
     re_path(r'^stats/$', views.StatsView.as_view(), name='stats'),
+    re_path(r'^stats/chart/$', views.SalesByTypeChartView.as_view(), name='stats_chart'),
     re_path(r'^time/$', views.TimeInfoView.as_view(), name='time_info'),
 ]

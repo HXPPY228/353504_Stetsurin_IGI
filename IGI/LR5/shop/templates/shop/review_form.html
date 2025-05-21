@@ -1,9 +1,54 @@
 {% extends 'base.html' %}
+{% block title %}Оставить отзыв{% endblock %}
+
 {% block content %}
   <h1>Оставить отзыв</h1>
-  <form method="post">
+  <form method="post" id="review-form">
     {% csrf_token %}
-    {{ form.as_p }}
+
+    {{ form.non_field_errors }}
+
+    <div>
+      {{ form.rating.label_tag }}
+      {{ form.rating }}
+      {% for error in form.rating.errors %}
+        <div style="color:red;">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div>
+      {{ form.text.label_tag }}
+      {{ form.text }}
+      {% for error in form.text.errors %}
+        <div style="color:red;">{{ error }}</div>
+      {% endfor %}
+    </div>
+
     <button type="submit">Отправить</button>
   </form>
+
+  <script>
+    document.getElementById('review-form').addEventListener('submit', function(e) {
+      const form = e.target;
+      const rating = form.querySelector('input[name="rating"]');
+      const text   = form.querySelector('textarea[name="text"]');
+
+      let valid = true;
+      // JS-валидация рейтинга
+      const r = Number(rating.value);
+      if (!r || r < 1 || r > 5) {
+        alert('Рейтинг должен быть числом от 1 до 5.');
+        valid = false;
+      }
+      // JS-валидация текста
+      if (!text.value.trim()) {
+        alert('Пожалуйста, напишите текст отзыва.');
+        valid = false;
+      }
+
+      if (!valid) {
+        e.preventDefault();
+      }
+    });
+  </script>
 {% endblock %}
