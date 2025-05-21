@@ -5,14 +5,20 @@
   <h1>Новости</h1>
   <ul>
     {% for article in articles %}
-      <li style="margin-bottom:1em;">
-        <h2>{{ article.title }}</h2>
-        <p><em>{{ article.published_at|date:"d.m.Y" }}</em></p>
-        <img src="/media/news_images/strength.png" width="200">
+      <li>
+        <h2><a>{{ article.title }}</a></h2>
         <p>{{ article.body }}</p>
+        {% if article.image %}
+          <img src="{{ article.image.url }}" width="200" alt="{{ article.title }}" width="200">
+        {% endif %}
+        {% if article.tags.exists %}
+          <p>Тэги:
+            {% for tag in article.tags.all %}
+              <a>{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
       </li>
-    {% empty %}
-      <li>Пока нет новостей.</li>
     {% endfor %}
   </ul>
   {% if is_paginated %}

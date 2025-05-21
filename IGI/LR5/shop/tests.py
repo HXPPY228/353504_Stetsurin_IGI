@@ -1,8 +1,10 @@
 from django.test import TestCase, Client as TestClient
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from .models import ProductType, Product, Client, Order, OrderItem, Review
-from datetime import date
+from shop.forms import SignUpForm, ReviewForm
+from .models import Product, ProductType, Order, OrderItem, Client as ClientProfile, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, Client
+from datetime import date, timedelta
+from .views import PromoListView
 
 User = get_user_model()
 
@@ -109,3 +111,54 @@ class ShopTestCase(TestCase):
         # ensure filtered and sorted
         products = response.context['products']
         self.assertEqual(list(products), [p2])
+
+class FormsAndFiltersTestCase(TestCase):
+
+    def test_signup_form_valid(self):
+        eighteen_years_ago = date.today() - timedelta(days=18*365 + 5)
+        form = SignUpForm(data={'username': 'newuser','first_name': 'Ivan','last_name': 'Ivanov','email': 'ivan@example.com','phone': '+375 (29) 123-45-67','birth_date': eighteen_years_ago.strftime('%Y-%m-%d'),'password1': 'complexpassword123','password2': 'complexpassword123',})
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_signup_form_invalid_phone(self):
+        bd = date.today() - timedelta(days=20*365)
+        form = SignUpForm(data={
+            'username': 'u',
+            'first_name': '',
+            'last_name': '',
+            'email': 'e@e.com',
+            'phone': '123456',
+            'birth_date': bd.strftime('%Y-%m-%d'),
+            'password1': 'pass1234',
+            'password2': 'pass1234',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('phone', form.errors)
+        self.assertIn('Телефон в формате', form.errors['phone'][0])
+
+    def test_signup_form_invalid_birth_date(self):
+        seventeen_years_ago = date.today() - timedelta(days=17*365)
+        form = SignUpForm(data={
+            'username': 'younguser',
+            'first_name': 'Юный',
+            'last_name': 'Пользователь',
+            'email': 'y@example.com',
+            'phone': '+375 (29) 987-65-43',
+            'birth_date': seventeen_years_ago.strftime('%Y-%m-%d'),
+            'password1': 'abcd1234',
+            'password2': 'abcd1234',
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('birth_date', form.errors)
+        self.assertIn('не менее 18 лет', form.errors['birth_date'][0])
+
+    def test_review_form_valid_and_invalid(self):
+        form = ReviewForm(data={'rating': 4, 'text': 'Хорошо!'})
+        self.assertTrue(form.is_valid(), form.errors)
+
+        form = ReviewForm(data={'rating': 10, 'text': 'Супер!'})
+        self.assertFalse(form.is_valid())
+        self.assertIn('rating', form.errors)
+
+        form = ReviewForm(data={'rating': 3, 'text': '    '})
+        self.assertFalse(form.is_valid())
+        self.assertIn('text', form.errors)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode
+from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode, Tag
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
@@ -35,12 +35,18 @@ class ClientAdmin(admin.ModelAdmin):
     def email(self, obj):
         return obj.user.email
 
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display  = ('title','published_at')
     prepopulated_fields = {'slug': ('title',)}
     list_filter   = ('published_at',)
     search_fields = ('title','teaser','body')
+    filter_horizontal = ('tags',)
 
 @admin.register(CompanyInfo)
 class CompanyInfoAdmin(admin.ModelAdmin):

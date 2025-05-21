@@ -150,3 +150,19 @@ Traceback (most recent call last):
   File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 700, in send
     raise ConnectionError(e, request=request)
 requests.exceptions.ConnectionError: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE6F8190>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+[INFO] 21/05/2025 23:41:29 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:41:29 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:43:06 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:43:06 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:43:38 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:43:38 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:44:48 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:44:48 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:45:49 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:45:49 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:51:26 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:51:26 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:53:31 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:53:31 shop views:128 — Order #1 updated by user testuser
+[INFO] 22/05/2025 00:31:53 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 22/05/2025 00:31:54 shop views:128 — Order #1 updated by user testuser

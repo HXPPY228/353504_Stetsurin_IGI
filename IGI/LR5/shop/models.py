@@ -55,7 +55,17 @@ class OrderItem(models.Model):
     def line_total(self):
         return self.product.price * self.quantity
 
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
 
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Тэги'
+
+    def __str__(self):
+        return self.name
+    
 class Article(models.Model):
     # для Главной и Новости
     title        = models.CharField(max_length=200)
@@ -63,6 +73,12 @@ class Article(models.Model):
     published_at = models.DateTimeField(auto_now_add=True)
     teaser       = models.CharField(max_length=250, blank=True)  # одно предложение
     body         = models.TextField()
+    tags = models.ManyToManyField(
+        Tag,
+        related_name='articles',
+        blank=True,
+        verbose_name='Тэги'
+    )
     image        = models.ImageField(upload_to='news_images/', blank=True)
 
     def __str__(self):

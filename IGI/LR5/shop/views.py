@@ -8,6 +8,7 @@ from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q
 import requests
 from statistics import mean, median, multimode
 from datetime import date
+import datetime
 from django.utils import timezone
 import calendar
 import pytz
@@ -348,53 +349,59 @@ class StatsView(LoginRequiredMixin, SellerRequiredMixin, TemplateView):
 
         return ctx
     
+def get_user_timezone(request):
+    tzname = request.COOKIES.get('user_timezone')
+    try:
+        return pytz.timezone(tzname)
+    except Exception:
+        return timezone.get_default_timezone()
+    
 class TimeInfoView(TemplateView):
     template_name = 'shop/time_info.html'
 
     def get_context_data(self, **ctx):
         ctx = super().get_context_data(**ctx)
 
-        # 1) Задаём зону +3 вручную
-        user_tz = pytz.timezone('Europe/Minsk')
-        ctx['tz_name'] = user_tz.zone
+        # 1) Определяем тайм-зону из куки
+        user_tz = get_user_timezone(self.request)
+        ctx['tz_name'] = str(user_tz)
 
-        # 2) Текущее время в UTC и в user_tz
-        now_utc   = timezone.now()
+        # 2) Текущее время UTC и в user_tz
+        now_utc = datetime.datetime.now(pytz.UTC)
         now_local = now_utc.astimezone(user_tz)
         ctx['now_utc']   = now_utc.strftime("%d/%m/%Y %H:%M:%S")
         ctx['now_local'] = now_local.strftime("%d/%m/%Y %H:%M:%S")
 
         # 3) Последняя статья
-        latest_article = Article.objects.order_by('-published_at').first()
-        if latest_article:
-            art_utc   = latest_article.published_at
-            art_local = art_utc.astimezone(user_tz)
-            ctx['article']       = latest_article
-            ctx['article_utc']   = art_utc.strftime("%d/%m/%Y %H:%M:%S")
-            ctx['article_local'] = art_local.strftime("%d/%m/%Y %H:%M:%S")
+        art = Article.objects.order_by('-published_at').first()
+        if art:
+            utc = art.published_at.astimezone(pytz.UTC)
+            loc = utc.astimezone(user_tz)
+            ctx['article']       = art
+            ctx['article_utc']   = utc.strftime("%d/%m/%Y %H:%M:%S")
+            ctx['article_local'] = loc.strftime("%d/%m/%Y %H:%M:%S")
 
         # 4) Последний заказ
-        latest_order = Order.objects.order_by('-created_at').first()
-        if latest_order:
-            ord_utc   = latest_order.created_at
-            ord_local = ord_utc.astimezone(user_tz)
-            ctx['order']       = latest_order
-            ctx['order_utc']   = ord_utc.strftime("%d/%m/%Y %H:%M:%S")
-            ctx['order_local'] = ord_local.strftime("%d/%m/%Y %H:%M:%S")
+        ord = Order.objects.order_by('-created_at').first()
+        if ord:
+            utc = ord.created_at.astimezone(pytz.UTC)
+            loc = utc.astimezone(user_tz)
+            ctx['order']       = ord
+            ctx['order_utc']   = utc.strftime("%d/%m/%Y %H:%M:%S")
+            ctx['order_local'] = loc.strftime("%d/%m/%Y %H:%M:%S")
 
         # 5) Последний отзыв
-        latest_review = Review.objects.order_by('-published_at').first()
-        if latest_review:
-            rev_utc   = latest_review.published_at
-            rev_local = rev_utc.astimezone(user_tz)
-            ctx['review']       = latest_review
-            ctx['review_utc']   = rev_utc.strftime("%d/%m/%Y %H:%M:%S")
-            ctx['review_local'] = rev_local.strftime("%d/%m/%Y %H:%M:%S")
+        rev = Review.objects.order_by('-published_at').first()
+        if rev:
+            utc = rev.published_at.astimezone(pytz.UTC)
+            loc = utc.astimezone(user_tz)
+            ctx['review']       = rev
+            ctx['review_utc']   = utc.strftime("%d/%m/%Y %H:%M:%S")
+            ctx['review_local'] = loc.strftime("%d/%m/%Y %H:%M:%S")
 
-        # 6) Текстовый календарь текущего месяца
+        # 6) Текстовый календарь
         today = now_local.date()
-        cal = calendar.TextCalendar()
-        ctx['calendar_text'] = cal.formatmonth(today.year, today.month)
+        ctx['calendar_text'] = calendar.TextCalendar().formatmonth(today.year, today.month)
 
         return ctx
 
