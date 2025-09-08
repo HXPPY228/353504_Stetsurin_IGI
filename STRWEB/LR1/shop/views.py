@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView, View
 from django import forms
 from django.urls import reverse_lazy
-from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem, Partner
+from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem, Partner,CompanyTimeline
 from .forms import OrderForm, ReviewForm, SignUpForm, OrderItemFormSet
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q
@@ -234,16 +234,39 @@ class HomeView(TemplateView):
         ctx['partners'] = Partner.objects.filter(is_active=True).order_by('order', 'name')
         return ctx
 
-class AboutView(ListView):
-    model = CompanyInfo
+class AboutView(TemplateView):
     template_name = 'shop/about.html'
-    context_object_name = 'timeline'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['company'] = CompanyInfo.objects.first() 
+        context['timeline'] = CompanyTimeline.objects.all()
+        return context
 
 class NewsListView(ListView):
     model = Article
     template_name = 'shop/news_list.html'
     context_object_name = 'articles'
     paginate_by = 10
+    
+class NewsDetailView(DetailView):
+    model = Article
+    template_name = 'shop/news_detail.html'
+    context_object_name = 'article'
+    
+class NewsByTagListView(ListView):
+    model = Article
+    template_name = 'shop/news_list.html'
+    context_object_name = 'articles'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Article.objects.filter(tags__slug=self.kwargs['slug']).order_by('-published_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_tag'] = self.kwargs['slug']
+        return context
 
 class GlossaryListView(ListView):
     model = GlossaryTerm
@@ -267,6 +290,9 @@ class PromoListView(ListView):
     model = PromoCode
     template_name = 'shop/promocodes.html'
     context_object_name = 'promocodes'
+
+    def get_queryset(self):
+        return PromoCode.objects.all().order_by('-expires_at')
 
 class ReviewListView(ListView):
     model = Review

@@ -30,4 +30,7 @@ urlpatterns = [
     re_path(r'^cart/item/(?P<pk>\d+)/update/$', views.UpdateCartItemView.as_view(), name='update_cart_item'),
     re_path(r'^cart/checkout/$', views.CheckoutView.as_view(), name='checkout'),
     re_path(r'^checkout/$', views.CheckoutView.as_view(), name='checkout'),
+    re_path(r'^news/(?P<slug>[-\w]+)/$', views.NewsDetailView.as_view(), name='news_detail'),
+    re_path(r'^news/tag/(?P<slug>[-\w]+)/$', views.NewsByTagListView.as_view(), name='news_by_tag'),
+
 ]

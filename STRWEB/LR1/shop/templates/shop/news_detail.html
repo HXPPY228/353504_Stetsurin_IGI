@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+  <div class="news-detail">
+    <h1>{{ article.title }}</h1>
+    <p class="published-date">Опубликовано: {{ article.published_at|date:"d.m.Y H:i" }}</p>
+
+    {% if article.image %}
+      <img src="{{ article.image.url }}" alt="{{ article.title }}" class="news-image" width="400">
+    {% endif %}
+
+    <div class="news-body">
+      {{ article.body|linebreaks }}
+    </div>
+
+    {% if article.tags.exists %}
+        <p class="news-tags">
+            Тэги:
+            {% for tag in article.tags.all %}
+            {% if tag.slug %}
+                <a href="{% url 'shop:news_by_tag' tag.slug %}">{{ tag.name }}</a>
+            {% else %}
+                {{ tag.name }}
+            {% endif %}
+            {% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+
+
+    <a href="{% url 'shop:news_list' %}" class="back-btn">« Назад к новостям</a>
+  </div>
+{% endblock %}

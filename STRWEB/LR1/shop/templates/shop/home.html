@@ -20,11 +20,18 @@
   <hr>
   <h1>Последняя статья</h1>
   {% if latest %}
-    <h2>{{ latest.title }}</h2>
+    <h2>
+      <a href="{% url 'shop:news_detail' slug=latest.slug %}">{{ latest.title }}</a>
+    </h2>
     <p>{{ latest.teaser }}</p>
     {% if latest.image %}
-      <img src="{{ latest.image.url }}" width="200" alt="{{ latest.title }}" width="200">
+      <img src="{{ latest.image.url }}" width="200" alt="{{ latest.title }}">
     {% endif %}
+    <p>
+      <a href="{% url 'shop:news_detail' slug=latest.slug %}" class="read-more-btn">
+        Читать далее
+      </a>
+    </p>
   {% else %}
     <p>Пока нет статей.</p>
   {% endif %}

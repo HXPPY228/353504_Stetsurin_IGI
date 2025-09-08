@@ -3,15 +3,47 @@
 
 {% block content %}
   <h1>Словарь терминов и понятий</h1>
-  <dl>
+  <dl class="glossary-list">
     {% for term in terms %}
-      <dt><strong>{{ term.term }}</strong> <small>({{ term.added_at|date:"d.m.Y" }})</small></dt>
-      <dd>{{ term.definition }}</dd>
+      <dt>
+        <a href="javascript:void(0);" class="term-toggle">
+          <strong>{{ term.term }}</strong>
+          <small>({{ term.added_at|date:"d.m.Y" }})</small>
+        </a>
+      </dt>
+      <dd class="term-definition" style="display:none;">
+        {{ term.definition|linebreaks }}
+      </dd>
     {% empty %}
       <p>Нет терминов.</p>
     {% endfor %}
   </dl>
+
   {% if is_paginated %}
-    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+      {% endif %}
+      <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+      {% endif %}
+    </div>
   {% endif %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggles = document.querySelectorAll('.term-toggle');
+      toggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+          const dd = this.parentElement.nextElementSibling;
+          if(dd.style.display === 'none') {
+            dd.style.display = 'block';
+          } else {
+            dd.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
 {% endblock %}

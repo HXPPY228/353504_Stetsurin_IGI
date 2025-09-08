@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.conf import settings
 from datetime import date
+from django.utils import timezone
 
 class ProductType(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -78,7 +79,6 @@ class Tag(models.Model):
         return self.name
     
 class Article(models.Model):
-    # для Главной и Новости
     title        = models.CharField(max_length=200)
     slug         = models.SlugField(unique=True)
     published_at = models.DateTimeField(auto_now_add=True)
@@ -96,18 +96,31 @@ class Article(models.Model):
         return self.title
 
 class CompanyInfo(models.Model):
-    # раздел «О компании»
-    year         = models.PositiveIntegerField()
-    description  = models.TextField()
-
-    class Meta:
-        ordering = ('year',)
+    name = models.CharField(max_length=255, verbose_name="Название компании")
+    description = models.TextField(verbose_name="Описание")
+    logo = models.ImageField(upload_to='logos/', blank=True, null=True, verbose_name="Логотип")
+    video_url = models.TextField(blank=True, null=True, help_text="Ссылка или путь к видео (например, /media/video/promo.mp4)")
+    inn = models.CharField(max_length=12, blank=True, null=True, verbose_name="ИНН")
+    ogrn = models.CharField(max_length=13, blank=True, null=True, verbose_name="ОГРН")
+    address = models.CharField(max_length=255, blank=True, null=True, verbose_name="Юридический адрес")
+    certificate = models.TextField(blank=True, help_text="Текст сертификата")
 
     def __str__(self):
-        return str(self.year)
+        return self.name
+
+
+class CompanyTimeline(models.Model):
+    year = models.PositiveIntegerField(verbose_name="Год")
+    description = models.TextField(verbose_name="Событие")
+
+    class Meta:
+        ordering = ('-year',) 
+
+    def __str__(self):
+        return f"{self.year}"
+
 
 class GlossaryTerm(models.Model):
-    # «Словарь терминов и понятий»
     term         = models.CharField(max_length=100, unique=True)
     definition   = models.TextField()
     added_at     = models.DateTimeField(auto_now_add=True)
@@ -127,7 +140,6 @@ class Contact(models.Model):
         return self.name
 
 class Vacancy(models.Model):
-    # «Вакансии»
     title        = models.CharField(max_length=200)
     description  = models.TextField()
     posted_at    = models.DateTimeField(auto_now_add=True)
@@ -149,16 +161,20 @@ class Review(models.Model):
 
 
 class PromoCode(models.Model):
-    # «Промокоды и купоны»
-    code         = models.CharField(max_length=50, unique=True)
-    discount     = models.DecimalField(max_digits=5, decimal_places=2)
-    active       = models.BooleanField(default=True)
-    created_at   = models.DateTimeField(auto_now_add=True)
-    expires_at   = models.DateTimeField(null=True, blank=True)
+    code       = models.CharField(max_length=50, unique=True)
+    discount   = models.DecimalField(max_digits=5, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+
+    @property
+    def is_active(self):
+        from django.utils import timezone
+        if self.expires_at:
+            return self.expires_at >= timezone.now()
+        return True
 
     def __str__(self):
-        status = "active" if self.active else "archived"
-        return f"{self.code} ({status})"
+        return f"{self.code} ({'active' if self.is_active else 'archived'})"
     
     
 class Partner(models.Model):

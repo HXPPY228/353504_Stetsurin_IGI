@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode, Tag, Partner
+from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode, Tag, Partner, CompanyTimeline
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
@@ -51,7 +51,11 @@ class ArticleAdmin(admin.ModelAdmin):
 
 @admin.register(CompanyInfo)
 class CompanyInfoAdmin(admin.ModelAdmin):
-    list_display = ('year','description')
+    list_display = ('name', 'inn', 'ogrn')
+    
+@admin.register(CompanyTimeline)
+class CompanyTimelineAdmin(admin.ModelAdmin):
+    list_display = ('year', 'description')
 
 @admin.register(GlossaryTerm)
 class GlossaryTermAdmin(admin.ModelAdmin):
@@ -78,9 +82,12 @@ class ReviewAdmin(admin.ModelAdmin):
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
-    list_display  = ('code','discount','active','created_at','expires_at')
-    list_filter   = ('active','created_at')
-    search_fields = ('code',)
+    list_display = ('code', 'discount', 'status', 'expires_at', 'created_at')
+    list_filter = ('expires_at',)
+
+    @admin.display(boolean=True, description='Действует')
+    def status(self, obj):
+        return obj.is_active
     
 @admin.register(Partner)
 class PartnerAdmin(admin.ModelAdmin):

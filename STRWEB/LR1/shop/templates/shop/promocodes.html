@@ -9,7 +9,7 @@
       <tr>
         <td>{{ p.code }}</td>
         <td>{{ p.discount }}%</td>
-        <td>{% if p.active %}Действует{% else %}Истёк{% endif %}</td>
+        <td>{% if p.is_active %}Действует{% else %}Истёк{% endif %}</td>
         <td>{{ p.expires_at|date:"d.m.Y" }}</td>
       </tr>
     {% empty %}

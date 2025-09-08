@@ -3,25 +3,47 @@
 
 {% block content %}
   <h1>Новости</h1>
-  <ul>
+  <ul class="news-list">
     {% for article in articles %}
-      <li>
-        <h2><a>{{ article.title }}</a></h2>
-        <p>{{ article.body }}</p>
+      <li class="news-item">
+        <h2><a href="{% url 'shop:news_detail' slug=article.slug %}">{{ article.title }}</a></h2>
+        
         {% if article.image %}
-          <img src="{{ article.image.url }}" width="200" alt="{{ article.title }}" width="200">
+          <img src="{{ article.image.url }}" alt="{{ article.title }}" width="200">
         {% endif %}
+        
+        <p>{{ article.teaser }}</p>
+        
+        <a href="{% url 'shop:news_detail' slug=article.slug %}" class="read-more-btn">Читать далее</a>
+        
         {% if article.tags.exists %}
           <p>Тэги:
             {% for tag in article.tags.all %}
-              <a>{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+              {% if tag.slug %}
+                <a href="{% url 'shop:news_by_tag' tag.slug %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+              {% else %}
+                {{ tag.name }}{% if not forloop.last %}, {% endif %}
+              {% endif %}
             {% endfor %}
           </p>
         {% endif %}
       </li>
+    {% empty %}
+      <li>Новостей пока нет.</li>
     {% endfor %}
   </ul>
+
   {% if is_paginated %}
-    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+      {% endif %}
+
+      <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Вперед »</a>
+      {% endif %}
+    </div>
   {% endif %}
 {% endblock %}
