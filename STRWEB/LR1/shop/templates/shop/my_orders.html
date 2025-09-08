@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Мои заказы{% endblock %}
+
+{% block content %}
+  <h1>Мои заказы</h1>
+
+  {% if object_list %}
+    <ul>
+      {% for order in object_list %}
+        <li style="margin-bottom:2em;">
+          <h2>
+            Заказ №{{ order.id }} от {{ order.created_at|date:"d.m.Y H:i" }}
+            {% if order.status == 'paid' %}
+              — <span style="color:green;">Оплачен</span>
+            {% elif order.status == 'placed' %}
+              — <span style="color:blue;">Оформлен</span>
+            {% endif %}
+          </h2>
+          <p><strong>Итого:</strong> {{ order.total_price }} ₽</p>
+
+          <table border="1" cellpadding="4" cellspacing="0">
+            <tr>
+              <th>Товар</th>
+              <th>Кол-во</th>
+              <th>Цена за шт.</th>
+            </tr>
+            {% for item in order.items.all %}
+              <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }} ₽</td>
+              </tr>
+            {% endfor %}
+          </table>
+          <p style="margin-top:0.5em;">
+            <a href="{% url 'shop:order_update' pk=order.pk %}">Изменить</a> |
+            <a href="{% url 'shop:order_delete' pk=order.pk %}">Удалить</a>
+          </p>
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+      <div>
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">« Назад</a>
+        {% endif %}
+        <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Вперёд »</a>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% else %}
+    <p>У вас пока нет заказов.</p>
+  {% endif %}
+
+{% endblock %}

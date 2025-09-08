@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Оплата заказа{% endblock %}
+{% block content %}
+<h1>Оплата заказа №{{ order.id }}</h1>
+
+<p><strong>Сумма к оплате:</strong> {{ order.total_price }} ₽</p>
+
+{% if error %}
+  <p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <p>
+    <label><input type="radio" name="payment_method" value="cod"> Оплатить при получении</label>
+  </p>
+  <p>
+    <label><input type="radio" name="payment_method" value="online"> Онлайн-оплата</label>
+  </p>
+
+  <div id="card-fields" style="display:none; margin:1em 0;">
+    <p>
+      <label>Номер карты:<br>
+        <input type="text" name="card_number" placeholder="0000 0000 0000 0000">
+      </label>
+    </p>
+    <p>
+      <label>Срок действия (MM/YY):<br>
+        <input type="text" name="exp_date" placeholder="12/25">
+      </label>
+    </p>
+    <p>
+      <label>CVV:<br>
+        <input type="text" name="cvv" placeholder="123">
+      </label>
+    </p>
+  </div>
+
+  <button type="submit">Оплатить</button>
+</form>
+
+<script>
+document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    document.getElementById('card-fields').style.display = (this.value === 'online') ? 'block' : 'none';
+  });
+});
+</script>
+
+{% endblock %}

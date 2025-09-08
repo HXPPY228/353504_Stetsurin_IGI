@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Промокоды и купоны{% endblock %}
+
+{% block content %}
+  <h1>Промокоды и купоны</h1>
+  <table border="1" cellpadding="4">
+    <tr><th>Код</th><th>Скидка</th><th>Статус</th><th>Активен до</th></tr>
+    {% for p in promocodes %}
+      <tr>
+        <td>{{ p.code }}</td>
+        <td>{{ p.discount }}%</td>
+        <td>{% if p.active %}Действует{% else %}Истёк{% endif %}</td>
+        <td>{{ p.expires_at|date:"d.m.Y" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">Нет промокодов.</td></tr>
+    {% endfor %}
+  </table>
+{% endblock %}

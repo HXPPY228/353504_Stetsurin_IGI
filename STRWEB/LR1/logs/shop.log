@@ -1,0 +1,325 @@
+[INFO] 21/05/2025 20:37:26 shop views:84 — New order #9 created by user zxc (client_id=2)
+[INFO] 21/05/2025 20:37:48 shop views:127 — Order #9 updated by user zxc
+[ERROR] 21/05/2025 20:38:11 shop views:210 — Error getting BB Quote: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE61C2D0>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Professional\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x00000199BE61C2D0>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE61C2D0>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\shop\views.py", line 205, in get_context_data
+    resp = requests.get('https://api.breakingbadquotes.xyz/v1/quotes')
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE61C2D0>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+[ERROR] 21/05/2025 20:38:11 shop views:219 — Error getting joke: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE6F8190>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Professional\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x00000199BE6F8190>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE6F8190>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\shop\views.py", line 215, in get_context_data
+    resp2 = requests.get('https://official-joke-api.appspot.com/jokes/random')
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x00000199BE6F8190>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+[INFO] 21/05/2025 23:41:29 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:41:29 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:43:06 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:43:06 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:43:38 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:43:38 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:44:48 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:44:48 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:45:49 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:45:49 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:51:26 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:51:26 shop views:128 — Order #1 updated by user testuser
+[INFO] 21/05/2025 23:53:31 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 21/05/2025 23:53:31 shop views:128 — Order #1 updated by user testuser
+[INFO] 22/05/2025 00:31:53 shop views:85 — New order #1 created by user testuser (client_id=1)
+[INFO] 22/05/2025 00:31:54 shop views:128 — Order #1 updated by user testuser
+[ERROR] 22/05/2025 15:58:25 shop views:212 — Error getting BB Quote: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5CB3380>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Professional\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x000001BAF5CB3380>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5CB3380>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\shop\views.py", line 207, in get_context_data
+    resp = requests.get('https://api.breakingbadquotes.xyz/v1/quotes')
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='api.breakingbadquotes.xyz', port=443): Max retries exceeded with url: /v1/quotes (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5CB3380>: Failed to resolve 'api.breakingbadquotes.xyz' ([Errno 11001] getaddrinfo failed)"))
+[ERROR] 22/05/2025 15:58:25 shop views:221 — Error getting joke: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5AC5090>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+        (self._dns_host, self.port),
+    ...<2 lines>...
+        socket_options=self.socket_options,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\connection.py", line 60, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+               ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Professional\AppData\Local\Programs\Python\Python313\Lib\socket.py", line 977, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+        conn,
+    ...<10 lines>...
+        **response_kw,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 488, in _make_request
+    raise new_e
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 704, in connect
+    self.sock = sock = self._new_conn()
+                       ~~~~~~~~~~~~~~^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connection.py", line 205, in _new_conn
+    raise NameResolutionError(self.host, self, e) from e
+urllib3.exceptions.NameResolutionError: <urllib3.connection.HTTPSConnection object at 0x000001BAF5AC5090>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 667, in send
+    resp = conn.urlopen(
+        method=request.method,
+    ...<9 lines>...
+        chunked=chunked,
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+        method, url, error=new_e, _pool=self, _stacktrace=sys.exc_info()[2]
+    )
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\urllib3\util\retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5AC5090>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\shop\views.py", line 217, in get_context_data
+    resp2 = requests.get('https://official-joke-api.appspot.com/jokes/random')
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "D:\BSUIR\2_course\ИГИ\353504_Stetsurin_24\IGI\LR5\venv\Lib\site-packages\requests\adapters.py", line 700, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPSConnectionPool(host='official-joke-api.appspot.com', port=443): Max retries exceeded with url: /jokes/random (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001BAF5AC5090>: Failed to resolve 'official-joke-api.appspot.com' ([Errno 11001] getaddrinfo failed)"))
+[INFO] 22/05/2025 16:17:10 shop views:87 — New order #1 created by user testuser (client_id=1)
+[INFO] 22/05/2025 16:17:10 shop views:130 — Order #1 updated by user testuser
+[INFO] 22/05/2025 17:36:33 shop views:87 — New order #10 created by user fgh (client_id=5)
+[INFO] 22/05/2025 17:36:48 shop views:130 — Order #10 updated by user fgh
+[INFO] 22/05/2025 18:17:53 shop views:87 — New order #11 created by user fgh (client_id=5)
+[INFO] 22/05/2025 18:18:05 shop views:130 — Order #11 updated by user fgh
+[INFO] 07/09/2025 18:11:04 shop views:87 — New order #12 created by user zxc (client_id=2)

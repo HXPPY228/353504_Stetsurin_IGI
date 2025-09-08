@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Каталог изделий</h1>
+
+  <form method="get" style="margin-bottom:1em;">
+    <input type="text" name="q" placeholder="Поиск..." value="{{ request.GET.q }}">
+    <a>Сортировка по:</a>
+    <select name="sort">
+      <option value="name" {% if request.GET.sort == "name" %}selected{% endif %}>По названию</option>
+      <option value="price" {% if request.GET.sort == "price" %}selected{% endif %}>По цене</option>
+      <option value="product_type" {% if request.GET.sort == "product_type" %}selected{% endif %}>По типу</option>
+    </select>
+    <button type="submit">Применить</button>
+  </form>
+
+  <ul>
+    {% for p in products %}
+      <li>
+        {{ p.product_type.name }}: 
+        <a href="{% url 'shop:product_detail' p.pk %}">{{ p.name }}</a> — {{ p.price }} ₽
+      </li>    
+    {% empty %}
+      <li>Ничего не найдено.</li>
+    {% endfor %}
+  </ul>
+
+  {% if is_paginated %}
+    <div>
+      {% if page_obj.has_previous %}
+        <a href="?{% if request.GET.q %}q={{request.GET.q}}&{% endif %}{% if request.GET.sort %}sort={{request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">«</a>
+      {% endif %}
+      <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?{% if request.GET.q %}q={{request.GET.q}}&{% endif %}{% if request.GET.sort %}sort={{request.GET.sort}}&{% endif %}page={{ page_obj.next_page_number }}">»</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

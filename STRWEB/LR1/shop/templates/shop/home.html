@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+
+  <img src="media/logos/logo.png" alt="Логотип компании" style="width: 150px;">
+  <hr>
+  <style>
+    .banner { display: flex;gap: 20px; }
+  </style>
+  <section class="banner">
+    <a href="/" title="Кондитерская Хеппи">
+      <img src="media/logos/banner1.png" alt="Баннер 1" width="350">
+    </a>
+    <a href="/" title="Кондитерская Хеппи">
+      <img src="media/logos/banner2.png" alt="Баннер 2" width="350">
+    </a>
+  </section>
+  <hr>
+  <h1>Последняя статья</h1>
+  {% if latest %}
+    <h2>{{ latest.title }}</h2>
+    <p>{{ latest.teaser }}</p>
+    {% if latest.image %}
+      <img src="{{ latest.image.url }}" width="200" alt="{{ latest.title }}" width="200">
+    {% endif %}
+  {% else %}
+    <p>Пока нет статей.</p>
+  {% endif %}
+
+  <hr>
+
+  <h2><a href="products/">Каталог изделий</a></h2>
+
+  <hr>
+
+  <h2>Партнёры</h2>
+  <table>
+    <tr>
+      {% for p in partners %}
+        <td align="center">
+          <a href="{{ p.website }}" target="_blank" rel="noopener">
+            <img src="{{ p.logo.url }}" alt="{{ p.name }}" width="200">
+          </a>
+          <p>{{ p.name }}</p>
+        </td>
+      {% endfor %}
+    </tr>
+  </table>
+
+  <hr>
+
+  {% if user.is_authenticated %}
+    <h2>Цитата из «Во все тяжкие»</h2>
+    <blockquote>
+      “{{ bb_quote.quote }}”
+      {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
+    </blockquote>
+
+    <hr>
+
+    <h2>Случайная шутка</h2>
+    <blockquote>
+    <p>{{ joke.setup }}</p>
+    <p>{{ joke.punchline }}</p>
+    </blockquote>
+  {% else %}
+    <p><a href="{% url 'login' %}?next={% url 'shop:home' %}">
+      Войдите, чтобы получить цитаты и шутки
+    </a></p>
+  {% endif %}
+{% endblock %}

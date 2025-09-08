@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+  <h1>Новости</h1>
+  <ul>
+    {% for article in articles %}
+      <li>
+        <h2><a>{{ article.title }}</a></h2>
+        <p>{{ article.body }}</p>
+        {% if article.image %}
+          <img src="{{ article.image.url }}" width="200" alt="{{ article.title }}" width="200">
+        {% endif %}
+        {% if article.tags.exists %}
+          <p>Тэги:
+            {% for tag in article.tags.all %}
+              <a>{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% if is_paginated %}
+    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+  {% endif %}
+{% endblock %}
