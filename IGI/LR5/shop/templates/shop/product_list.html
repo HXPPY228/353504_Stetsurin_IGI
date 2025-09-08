@@ -16,8 +16,9 @@
   <ul>
     {% for p in products %}
       <li>
-        {{ p.product_type.name }}: {{ p.name }} — {{ p.price }} ₽
-      </li>
+        {{ p.product_type.name }}: 
+        <a href="{% url 'shop:product_detail' p.pk %}">{{ p.name }}</a> — {{ p.price }} ₽
+      </li>    
     {% empty %}
       <li>Ничего не найдено.</li>
     {% endfor %}

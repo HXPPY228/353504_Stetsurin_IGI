@@ -9,5 +9,12 @@
   <p><strong>Статус:</strong>
     {% if object.in_production %}В наличии{% else %}Нет в наличии{% endif %}
   </p>
-  <p><a href="{% url 'shop:order_create' %}">Сделать заказ</a></p>
+  {% if object.in_production %}
+    {% if not user.is_staff and user.is_authenticated %}   
+      <form method="post" action="{% url 'shop:add_to_cart' object.pk %}">
+        {% csrf_token %}
+        <button type="submit">Добавить в корзину</button>
+      </form>
+    {% endif %}
+  {% else %} {% endif %}
 {% endblock %}

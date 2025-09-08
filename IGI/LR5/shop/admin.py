@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode, Tag
+from django.utils.html import format_html
+from .models import ProductType, Product, Client, Order, OrderItem, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, Review, PromoCode, Tag, Partner
 
 @admin.register(ProductType)
 class ProductTypeAdmin(admin.ModelAdmin):
@@ -80,3 +81,16 @@ class PromoCodeAdmin(admin.ModelAdmin):
     list_display  = ('code','discount','active','created_at','expires_at')
     list_filter   = ('active','created_at')
     search_fields = ('code',)
+    
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'website', 'is_active', 'order', 'logo_tag')
+    list_editable = ('is_active', 'order')
+    search_fields = ('name',)
+    ordering = ('order', 'name')
+
+    def logo_tag(self, obj):
+        if obj.logo:
+            return format_html('<img src="{}" style="height:40px;">', obj.logo.url)
+        return '—'
+    logo_tag.short_description = 'Логотип'

@@ -24,4 +24,10 @@ urlpatterns = [
     re_path(r'^stats/$', views.StatsView.as_view(), name='stats'),
     re_path(r'^stats/chart/$', views.SalesByTypeChartView.as_view(), name='stats_chart'),
     re_path(r'^time/$', views.TimeInfoView.as_view(), name='time_info'),
+    
+    re_path(r'^cart/$', views.CartDetailView.as_view(), name='cart_detail'),
+    re_path(r'^cart/add/(?P<pk>\d+)/$', views.AddToCartView.as_view(), name='add_to_cart'),
+    re_path(r'^cart/item/(?P<pk>\d+)/update/$', views.UpdateCartItemView.as_view(), name='update_cart_item'),
+    re_path(r'^cart/checkout/$', views.CheckoutView.as_view(), name='checkout'),
+    re_path(r'^checkout/$', views.CheckoutView.as_view(), name='checkout'),
 ]

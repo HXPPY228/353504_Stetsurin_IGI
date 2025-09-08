@@ -5,12 +5,27 @@
   <h1>Контакты</h1>
   <div style="display:flex; flex-wrap:wrap;">
     {% for c in contacts %}
-      <div style="border:1px solid #ccc; padding:1em; margin:0.5em; width:300px;">
-        <img src="/media/contacts/mb3.png" width="300">
-        <h3>{{ c.name }}</h3>
-        <p>{{ c.role }}</p>
-        {% if c.phone %}<p>📞 {{ c.phone }}</p>{% endif %}
-        {% if c.email %}<p>✉️ {{ c.email }}</p>{% endif %}
+      <div style="border:1px solid #ccc; padding:1em; margin:0.5em; width:300px;"
+           itemscope itemtype="https://schema.org/Person">
+
+        {% if c.photo %}
+          <img src="{{ c.photo.url }}" width="200" alt="{{ c.name }}" itemprop="image">
+        {% else %}
+          <div style="width:200px; height:200px; background:#eee;"></div>
+        {% endif %}
+
+        <h3 itemprop="name">{{ c.name }}</h3>
+        <p itemprop="jobTitle">{{ c.role }}</p>
+
+        {% if c.phone %}
+          <p>📞 <span itemprop="telephone">{{ c.phone }}</span></p>
+        {% endif %}
+
+        {% if c.email %}
+          <p>✉️ <a href="mailto:{{ c.email }}" itemprop="email">{{ c.email }}</a></p>
+        {% endif %}
+
+        <meta itemprop="worksFor" content="Кондитерская Хеппи">
       </div>
     {% empty %}
       <p>Нет контактных лиц.</p>

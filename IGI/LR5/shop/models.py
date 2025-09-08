@@ -40,9 +40,20 @@ class Client(models.Model):
         return self.user.get_full_name() or self.user.username
 
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('cart', 'Корзина'),
+        ('placed', 'Оформлен'),
+        ('paid', 'Оплачен'),
+    ]
     client      = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='orders')
     created_at  = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='cart')
+    
+    def recalc_total(self):
+        total = sum(item.line_total() for item in self.items.all())
+        self.total_price = total
+        self.save()
 
     def __str__(self):
         return f"Order #{self.id} – {self.client}"
@@ -108,7 +119,7 @@ class Contact(models.Model):
     # «Контакты»
     name         = models.CharField(max_length=100)
     role         = models.CharField(max_length=100, blank=True)
-    photo        = models.ImageField(upload_to='contacts/', blank=True)
+    photo        = models.ImageField(upload_to='contacts/', blank=True, null=True)
     phone        = models.CharField(max_length=50, blank=True)
     email        = models.EmailField(blank=True)
 
@@ -148,3 +159,19 @@ class PromoCode(models.Model):
     def __str__(self):
         status = "active" if self.active else "archived"
         return f"{self.code} ({status})"
+    
+    
+class Partner(models.Model):
+    name = models.CharField(max_length=200)
+    website = models.URLField()
+    logo = models.ImageField(upload_to="logos/")
+    is_active = models.BooleanField('Показывать', default=True)
+    order = models.PositiveIntegerField('Порядок', default=0)
+
+    class Meta:
+        verbose_name = 'Партнёр'
+        verbose_name_plural = 'Партнёры'
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name

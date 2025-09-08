@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView, View
 from django import forms
 from django.urls import reverse_lazy
-from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem
+from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem, Partner
 from .forms import OrderForm, ReviewForm, SignUpForm, OrderItemFormSet
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q
@@ -12,11 +12,15 @@ import datetime
 from django.utils import timezone
 import calendar
 import pytz
+import re
 from django.contrib.auth import get_user_model
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-import io
+from io import BytesIO
 from django.http import HttpResponse
 import logging
+from django.shortcuts import redirect, get_object_or_404, render
 
 logger = logging.getLogger('shop')
 
@@ -166,7 +170,9 @@ class MyOrdersView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Order.objects.filter(client__user=self.request.user)
+        return Order.objects.filter(
+            client__user=self.request.user
+        ).exclude(status='cart').order_by('-created_at')
     
 class SellerRequiredMixin(UserPassesTestMixin):
     """Доступно только пользователям со статусом staff"""
@@ -225,6 +231,7 @@ class HomeView(TemplateView):
             ctx['bb_quote'] = None
             ctx['joke']    = None
             
+        ctx['partners'] = Partner.objects.filter(is_active=True).order_by('order', 'name')
         return ctx
 
 class AboutView(ListView):
@@ -407,7 +414,7 @@ class TimeInfoView(TemplateView):
 
 class SalesByTypeChartView(View):
     def get(self, request, *args, **kwargs):
-        # Собираем данные: для каждого типа товаров суммарную выручку
+        # Собираем данные
         qs = (
             OrderItem.objects
             .values(type_name=F('product__product_type__name'))
@@ -425,16 +432,129 @@ class SalesByTypeChartView(View):
         types = [row['type_name'] for row in qs]
         revenues = [float(row['revenue']) for row in qs]
 
-        plt.figure(figsize=(8,4))
-        plt.bar(range(len(types)), revenues)
-        plt.xticks(range(len(types)), types, rotation=45, ha='right')
-        plt.ylabel('Выручка, ₽')
-        plt.title('Выручка по типам товаров')
-        plt.tight_layout()
+        # Создаем фигуру с контекстным менеджером
+        with plt.ioff():  # Отключаем интерактивный режим
+            fig = plt.figure(figsize=(8,4))
+            plt.bar(range(len(types)), revenues)
+            plt.xticks(range(len(types)), types, rotation=45, ha='right')
+            plt.ylabel('Выручка, ₽')
+            plt.title('Выручка по типам товаров')
+            plt.tight_layout()
 
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png')
-        plt.close()
+            # Сохраняем в буфер
+            buf = BytesIO()
+            fig.savefig(buf, format='png')
+            plt.close(fig)  # Явно закрываем фигуру
 
         buf.seek(0)
         return HttpResponse(buf.getvalue(), content_type='image/png')
+    
+class AddToCartView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        client, _ = Client.objects.get_or_create(user=request.user)
+
+        order = Order.objects.filter(client=client, status='cart').first()
+        if not order:
+            order = Order.objects.create(client=client, status='cart', total_price=0)
+
+        item, created = OrderItem.objects.get_or_create(
+            order=order,
+            product=product,
+            defaults={'quantity': 1}
+        )
+        if not created:
+            item.quantity += 1
+            item.save()
+
+        order.total_price = sum(i.product.price * i.quantity for i in order.items.all())
+        order.save()
+
+        return redirect('shop:cart_detail')
+
+
+class CartDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'shop/cart_detail.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        client = self.request.user.client_profile
+        order = Order.objects.filter(client=client, status='cart').first()
+        ctx['order'] = order
+        return ctx
+
+
+class UpdateCartItemView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        item_id = kwargs.get('pk')
+        action = request.POST.get('action')
+        item = get_object_or_404(
+            OrderItem,
+            pk=item_id,
+            order__client=request.user.client_profile,
+            order__status='cart'
+        )
+
+        if action == 'inc':
+            item.quantity += 1
+            item.save()
+        elif action == 'dec':
+            if item.quantity > 1:
+                item.quantity -= 1
+                item.save()
+            else:
+                item.delete()
+        elif action == 'del':
+            item.delete()
+
+        if item.order:
+            item.order.recalc_total()
+
+        return redirect('shop:cart_detail')
+
+
+class CheckoutView(LoginRequiredMixin, View):
+    template_name = 'shop/checkout.html'
+
+    def get(self, request, *args, **kwargs):
+        order = get_object_or_404(Order, client__user=request.user, status='cart')
+        return render(request, self.template_name, {'order': order})
+
+    def post(self, request, *args, **kwargs):
+        order = get_object_or_404(Order, client__user=request.user, status='cart')
+        payment_method = request.POST.get('payment_method')
+
+        if payment_method == 'cod':
+            order.status = 'placed'
+            order.save()
+            return redirect('shop:my_orders')
+
+        elif payment_method == 'online':
+            card_number = request.POST.get('card_number', '').replace(' ', '')
+            exp_date = request.POST.get('exp_date', '')
+            cvv = request.POST.get('cvv', '')
+
+            # Валидация карты
+            errors = []
+            if not re.fullmatch(r'\d{16}', card_number):
+                errors.append('Номер карты должен состоять из 16 цифр.')
+            if not re.fullmatch(r'(0[1-9]|1[0-2])\/\d{2}', exp_date):
+                errors.append('Срок действия должен быть в формате MM/YY, месяц 01-12.')
+            if not re.fullmatch(r'\d{3}', cvv):
+                errors.append('CVV должен состоять из 3 цифр.')
+
+            if errors:
+                return render(request, self.template_name, {
+                    'order': order,
+                    'error': ' '.join(errors)
+                })
+
+            # Если всё ок — имитируем успешную оплату
+            order.status = 'paid'
+            order.save()
+            return redirect('shop:my_orders')
+
+        return render(request, self.template_name, {
+            'order': order,
+            'error': 'Выберите способ оплаты!'
+        })
