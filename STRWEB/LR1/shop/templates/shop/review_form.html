@@ -34,13 +34,11 @@
       const text   = form.querySelector('textarea[name="text"]');
 
       let valid = true;
-      // JS-валидация рейтинга
       const r = Number(rating.value);
       if (!r || r < 1 || r > 5) {
         alert('Рейтинг должен быть числом от 1 до 5.');
         valid = false;
       }
-      // JS-валидация текста
       if (!text.value.trim()) {
         alert('Пожалуйста, напишите текст отзыва.');
         valid = false;

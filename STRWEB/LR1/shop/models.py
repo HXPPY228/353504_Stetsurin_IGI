@@ -176,7 +176,6 @@ class PromoCode(models.Model):
     def __str__(self):
         return f"{self.code} ({'active' if self.is_active else 'archived'})"
     
-    
 class Partner(models.Model):
     name = models.CharField(max_length=200)
     website = models.URLField()

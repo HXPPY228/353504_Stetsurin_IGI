@@ -289,10 +289,15 @@ class VacancyListView(ListView):
 class PromoListView(ListView):
     model = PromoCode
     template_name = 'shop/promocodes.html'
-    context_object_name = 'promocodes'
+    context_object_name = 'promocodes' 
 
-    def get_queryset(self):
-        return PromoCode.objects.all().order_by('-expires_at')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now = timezone.now()
+        all_codes = PromoCode.objects.all().order_by('-expires_at')
+        context['active_promocodes'] = [p for p in all_codes if p.is_active]
+        context['expired_promocodes'] = [p for p in all_codes if not p.is_active]
+        return context
 
 class ReviewListView(ListView):
     model = Review

@@ -4,7 +4,15 @@
 
 {% block content %}
 
-  <img src="media/logos/logo.png" alt="Логотип компании" style="width: 150px;">
+  <figure style="text-align:center;">
+    <img src="media/logos/logo.png" alt="Логотип компании" style="max-width: 20%; height: auto;">
+    <figcaption>Наш фирменный логотип</figcaption>
+  </figure>
+  {% if user.is_authenticated %}
+    <div><a href="#breaking-bad-quote" style="display: inline-block; margin-bottom: 1em;">
+      Перейти к цитате из «Во все тяжкие»
+    </a></div>
+  {% endif %}
   <hr>
   <style>
     .banner { display: flex;gap: 20px; }
@@ -59,7 +67,7 @@
   <hr>
 
   {% if user.is_authenticated %}
-    <h2>Цитата из «Во все тяжкие»</h2>
+    <h2 id="breaking-bad-quote">Цитата из «Во все тяжкие»</h2>
     <blockquote>
       “{{ bb_quote.quote }}”
       {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
