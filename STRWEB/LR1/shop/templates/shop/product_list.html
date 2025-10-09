@@ -13,16 +13,19 @@
     <button type="submit">Применить</button>
   </form>
 
-  <ul>
+  <div class="product-grid">
     {% for p in products %}
-      <li>
-        {{ p.product_type.name }}: 
-        <a href="{% url 'shop:product_detail' p.pk %}">{{ p.name }}</a> — {{ p.price }} ₽
-      </li>    
+      <div class="product-card">
+        <div class="product-type">{{ p.product_type.name }}</div>
+        <div class="product-name">
+          <a href="{% url 'shop:product_detail' p.pk %}">{{ p.name }}</a>
+        </div>
+        <div class="product-price">{{ p.price }} ₽</div>
+      </div>
     {% empty %}
-      <li>Ничего не найдено.</li>
+      <div>Ничего не найдено.</div>
     {% endfor %}
-  </ul>
+  </div>
 
   {% if is_paginated %}
     <div>

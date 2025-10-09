@@ -2,15 +2,18 @@
 {% block title %}Отзывы{% endblock %}
 
 {% block content %}
+
+<div class="reviews-page">
   <h1>Отзывы</h1>
   <p><a href="{% url 'shop:review_create' %}">Оставить отзыв</a></p>
+
   <ul>
     {% for r in reviews %}
       <li style="margin-bottom:1em;">
         <p>
           <strong>
             {% if r.user %}
-              {{ r.user.get_full_name}}
+              {{ r.user.get_full_name }}
               ({{ r.user.username }})
             {% else %}
               {{ r.name }}
@@ -19,14 +22,17 @@
           &nbsp;<small>— {{ r.published_at|date:"d.m.Y H:i" }}</small>
         </p>
         <div>Оценка: {{ r.rating }}/5</div>
-        <p>{{ r.text }}</p>
+        <p>
+          <q lang="ru">{{ r.text }}</q>
+        </p>
       </li>
     {% empty %}
       <li>Нет отзывов.</li>
     {% endfor %}
   </ul>
-  
-  {% if is_paginated %}
-    <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
-  {% endif %}
+
+{% if is_paginated %} <div>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</div>
+{% endif %}
+
+</div>
 {% endblock %}

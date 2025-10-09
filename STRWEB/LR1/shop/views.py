@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from .models import Product, ProductType, Order, Client, Article, CompanyInfo, GlossaryTerm, Contact, Vacancy, PromoCode, Review, OrderItem, Partner,CompanyTimeline
 from .forms import OrderForm, ReviewForm, SignUpForm, OrderItemFormSet
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q
+from django.db.models import Sum, Count, DecimalField, ExpressionWrapper, F, Q, Case, When, Value, IntegerField
 import requests
 from statistics import mean, median, multimode
 from datetime import date
@@ -248,6 +248,7 @@ class NewsListView(ListView):
     template_name = 'shop/news_list.html'
     context_object_name = 'articles'
     paginate_by = 10
+    ordering = ['-published_at']
     
 class NewsDetailView(DetailView):
     model = Article
@@ -277,6 +278,17 @@ class ContactListView(ListView):
     model = Contact
     template_name = 'shop/contacts.html'
     context_object_name = 'contacts'
+    
+    def get_queryset(self):
+        return Contact.objects.annotate(
+            role_order=Case(
+                When(role='Director', then=Value(1)),
+                When(role='Supervisor', then=Value(2)),
+                When(role='Seller', then=Value(3)),
+                default=Value(99),
+                output_field=IntegerField(),
+            )
+        ).order_by('role_order')
 
 class PrivacyView(TemplateView):
     template_name = 'shop/privacy.html'
@@ -304,6 +316,7 @@ class ReviewListView(ListView):
     template_name = 'shop/reviews.html'
     context_object_name = 'reviews'
     paginate_by = 10
+    ordering = ['-published_at']
 
 class ReviewCreateView(LoginRequiredMixin, CreateView):
     model = Review
@@ -565,7 +578,7 @@ class CheckoutView(LoginRequiredMixin, View):
             exp_date = request.POST.get('exp_date', '')
             cvv = request.POST.get('cvv', '')
 
-            # Валидация карты
+            # card validation
             errors = []
             if not re.fullmatch(r'\d{16}', card_number):
                 errors.append('Номер карты должен состоять из 16 цифр.')
@@ -580,7 +593,6 @@ class CheckoutView(LoginRequiredMixin, View):
                     'error': ' '.join(errors)
                 })
 
-            # Если всё ок — имитируем успешную оплату
             order.status = 'paid'
             order.save()
             return redirect('shop:my_orders')

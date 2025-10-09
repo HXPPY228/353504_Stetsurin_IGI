@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}О компании{% endblock %}
 {% block content %}
   <h1>О компании{% if company %} {{ company.name }}{% endif %}</h1>
 
   {% if company %}
     {% if company.logo %}
-      <img src="{{ company.logo.url }}" alt="Логотип компании" width="200">
+      <img src="{{ company.logo.url }}" alt="Логотип компании" width="200" class="company-logo">
     {% endif %}
 
     <p>{{ company.description }}</p>
@@ -25,13 +26,27 @@
     </ul>
 
     {% if company.certificate %}
-      <h2>Сертификат</h2>
-      <pre>{{ company.certificate }}</pre>
+    <h2>Сертификат</h2>
+      <div class="certificate-bg">
+        <div class="certificate-border">
+          <div class="certificate-content">
+            <pre>{{ company.certificate }}</pre>
+            <div class="cert-signs">
+              <div class="cert-signature">
+                <img src="{% static 'img/1.png' %}" alt="Подпись" class="signature-img">
+              </div>
+              <div class="cert-stamp">
+                <img src="{% static 'img/2.png' %}" alt="Печать" class="stamp-img">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     {% endif %}
   {% endif %}
 
   <h2>История компании</h2>
-  <ul>
+  <ul class="history-list">
     {% for item in timeline %}
       <li><strong>{{ item.year }}</strong>: {{ item.description }}</li>
     {% empty %}

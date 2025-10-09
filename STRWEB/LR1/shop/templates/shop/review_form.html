@@ -2,6 +2,7 @@
 {% block title %}Оставить отзыв{% endblock %}
 
 {% block content %}
+<div class="review-form-page">
   <h1>Оставить отзыв</h1>
   <form method="post" id="review-form">
     {% csrf_token %}
@@ -24,8 +25,59 @@
       {% endfor %}
     </div>
 
+    <hr style="margin: 1.5rem 0;"> 
+    <h3>Примеры состояний</h3> 
+    <div> <label>Отключённое поле:</label> 
+      <input type="text" value="disabled" disabled> 
+    </div> 
+    <div> 
+      <label>Только для чтения:</label> 
+      <input type="text" value="readonly" readonly> 
+    </div> 
+    <div> 
+      <label>Обязательное поле:</label> 
+      <input type="text" placeholder="required" required> 
+    </div>
+    <div>
+      <label>Необязательное поле (optional):</label>
+      <input type="text" placeholder="optional">
+    </div> 
+    <div> 
+      <label>Невалидное поле (email):</label> 
+      <input type="email" value="неправильно" required> 
+    </div> 
+    <div>
+      <label>Число в диапазоне (1–5):</label>
+      <input type="number" min="1" max="5" value="3">
+    </div>
+    <div>
+      <label>Число вне диапазона (1–5):</label>
+      <input type="number" min="1" max="5" value="9">
+    </div>
+    <div> 
+      <label>Чекбокс включен:</label> 
+      <input type="checkbox" checked> 
+    </div> 
+    <div> 
+      <label>Чекбокс выключен:</label> 
+      <input type="checkbox" disabled> 
+    </div> 
+    <div> 
+      <label>Селект:</label> 
+      <select> 
+        <option>Первый</option> 
+        <option selected>Второй (selected)</option> 
+        <option>Третий</option> 
+      </select> 
+    </div> 
+    <div> 
+      <label>Textarea пример (disabled):</label> 
+      <textarea disabled>Пример заблокированного поля</textarea> 
+    </div>
+
     <button type="submit">Отправить</button>
   </form>
+</div>
 
   <script>
     document.getElementById('review-form').addEventListener('submit', function(e) {

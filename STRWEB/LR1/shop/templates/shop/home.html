@@ -1,19 +1,40 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Главная{% endblock %}
 
 {% block content %}
 
-  <figure style="text-align:center;">
-    <img src="media/logos/logo.png" alt="Логотип компании" style="max-width: 20%; height: auto;">
-    <figcaption>Наш фирменный логотип</figcaption>
-  </figure>
+<figure style="text-align:center;">
+  <img
+  src="media/logos/logo.png"
+  srcset="media/logos/logo-small.png 360w, media/logos/logo.png 400w"
+  sizes="(max-width: 400px) 80vw, 400px"
+  style="width: 100%; max-width: 300px; height: auto;"
+  alt="Логотип компании">
+
+  <figcaption class="company-name">Кондитерская Хеппи</figcaption>
+</figure>
   {% if user.is_authenticated %}
     <div><a href="#breaking-bad-quote" style="display: inline-block; margin-bottom: 1em;">
       Перейти к цитате из «Во все тяжкие»
     </a></div>
   {% endif %}
-  <hr>
+  
+  <div id="main-animation">
+    <div class="sweet cupcake"></div>
+    <div class="sweet candy"></div>
+    <div class="sweet cookie"></div>
+    <div class="cloud">
+      <div class="smile"></div>
+      <div class="puff1"></div>
+      <div class="puff2"></div>
+      <div class="puff3"></div>
+      <div class="puff4"></div>
+    </div>
+    <div class="company-name-anim">Кондитерская Хеппи</div>
+  </div>
+
   <style>
     .banner { display: flex;gap: 20px; }
   </style>
@@ -26,23 +47,23 @@
     </a>
   </section>
   <hr>
-  <h1>Последняя статья</h1>
-  {% if latest %}
-    <h2>
-      <a href="{% url 'shop:news_detail' slug=latest.slug %}">{{ latest.title }}</a>
-    </h2>
-    <p>{{ latest.teaser }}</p>
-    {% if latest.image %}
-      <img src="{{ latest.image.url }}" width="200" alt="{{ latest.title }}">
-    {% endif %}
-    <p>
-      <a href="{% url 'shop:news_detail' slug=latest.slug %}" class="read-more-btn">
+  <div class="latest-article-container">
+    <h2>Последняя статья</h2>
+    {% if latest %}
+      <h3>
+        <a href="{% url 'shop:news_detail' slug=latest.slug %}">{{ latest.title }}</a>
+      </h3>
+      <p>{{ latest.teaser }}</p>
+      {% if latest.image %}
+        <img src="{{ latest.image.url }}" width="200" alt="{{ latest.title }}" class="latest-article-image">
+      {% endif %}
+      <a href="{% url 'shop:news_detail' slug=latest.slug %}" class="read-more-btn-m">
         Читать далее
       </a>
-    </p>
-  {% else %}
-    <p>Пока нет статей.</p>
-  {% endif %}
+    {% else %}
+      <p>Пока нет статей.</p>
+    {% endif %}
+  </div>
 
   <hr>
 
@@ -51,27 +72,26 @@
   <hr>
 
   <h2>Партнёры</h2>
-  <table>
-    <tr>
-      {% for p in partners %}
-        <td align="center">
-          <a href="{{ p.website }}" target="_blank" rel="noopener">
-            <img src="{{ p.logo.url }}" alt="{{ p.name }}" width="200">
-          </a>
-          <p>{{ p.name }}</p>
-        </td>
-      {% endfor %}
-    </tr>
-  </table>
+  <div class="partners-list">
+    {% for p in partners %}
+      <div class="partner-block">
+        <a href="{{ p.website }}" target="_blank" rel="noopener">
+          <img src="{{ p.logo.url }}" alt="{{ p.name }}">
+        </a>
+        <p>{{ p.name }}</p>
+      </div>
+    {% endfor %}
+  </div>
 
   <hr>
 
   {% if user.is_authenticated %}
     <h2 id="breaking-bad-quote">Цитата из «Во все тяжкие»</h2>
-    <blockquote>
-      “{{ bb_quote.quote }}”
-      {% if bb_quote.author %}&mdash; <em>{{ bb_quote.author }}</em>{% endif %}
-    </blockquote>
+
+      <blockquote>
+        <q lang="en">{{ bb_quote.quote }}</q>
+        &mdash; <cite>{{ bb_quote.author }}</cite>
+      </blockquote>
 
     <hr>
 
@@ -85,4 +105,54 @@
       Войдите, чтобы получить цитаты и шутки
     </a></p>
   {% endif %}
+
+  <div class="preload-container">
+    <svg viewBox="0 0 220 100" width="220" height="100">
+      <path
+        d="M 30,50
+           C 30,20 90,20 110,50
+           C 130,80 190,80 190,50
+           C 190,20 130,20 110,50
+           C 90,80 30,80 30,50 Z"
+        fill="none"
+        stroke="#eee"
+        stroke-width="10"
+      />
+  
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#ff6b6b">
+            <animate
+              attributeName="stop-color"
+              values="#ff6b6b;#ffd93d;#6bcB77;#4d96ff;#ff6b6b"
+              dur="3s"
+              repeatCount="indefinite" />
+          </stop>
+          <stop offset="100%" stop-color="#4d96ff">
+            <animate
+              attributeName="stop-color"
+              values="#4d96ff;#ff6b6b;#ffd93d;#6bcB77;#4d96ff"
+              dur="3s"
+              repeatCount="indefinite" />
+          </stop>
+        </linearGradient>
+      </defs>
+
+      <path
+        d="M 30,50
+           C 30,20 90,20 110,50
+           C 130,80 190,80 190,50
+           C 190,20 130,20 110,50
+           C 90,80 30,80 30,50 Z"
+        fill="none"
+        stroke="url(#grad)"
+        stroke-width="10"
+        stroke-linecap="round"
+        pathLength="360"
+        stroke-dasharray="60 300"
+        class="infinity-line"
+      />
+    </svg>
+  </div>
+  
 {% endblock %}

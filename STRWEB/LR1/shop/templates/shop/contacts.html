@@ -2,28 +2,38 @@
 {% block title %}Контакты{% endblock %}
 
 {% block content %}
-  <h1>Контакты</h1>
-  <div style="display:flex; flex-wrap:wrap;">
+  <h1 class="contacts-title">Контакты</h1>
+
+  <div class="contacts-container">
     {% for c in contacts %}
-      <div style="border:1px solid #ccc; padding:1em; margin:0.5em; width:300px;"
-           itemscope itemtype="https://schema.org/Person">
+      <div class="contact-card" itemscope itemtype="https://schema.org/Person">
 
-        {% if c.photo %}
-          <img src="{{ c.photo.url }}" width="200" alt="{{ c.name }}" itemprop="image">
-        {% else %}
-          <div style="width:200px; height:200px; background:#eee;"></div>
-        {% endif %}
+        <div class="contact-photo">
+          {% if c.photo %}
+            <img src="{{ c.photo.url }}" alt="{{ c.name }}" itemprop="image">
+          {% else %}
+            <div class="contact-placeholder">Фото<br>отсутствует</div>
+          {% endif %}
+        </div>
 
-        <h3 itemprop="name">{{ c.name }}</h3>
-        <p itemprop="jobTitle">{{ c.role }}</p>
+        <div class="contact-info">
+          <h3 itemprop="name">{{ c.name }}</h3>
+          <p class="contact-role" itemprop="jobTitle">{{ c.role }}</p>
 
-        {% if c.phone %}
-          <p>📞 <span itemprop="telephone">{{ c.phone }}</span></p>
-        {% endif %}
+          {% if c.phone %}
+            <p class="contact-line">
+              <span class="icon">📞</span>
+              <span itemprop="telephone">{{ c.phone }}</span>
+            </p>
+          {% endif %}
 
-        {% if c.email %}
-          <p>✉️ <a href="mailto:{{ c.email }}" itemprop="email">{{ c.email }}</a></p>
-        {% endif %}
+          {% if c.email %}
+            <p class="contact-line">
+              <span class="icon">✉️</span>
+              <a href="mailto:{{ c.email }}" itemprop="email">{{ c.email }}</a>
+            </p>
+          {% endif %}
+        </div>
 
         <meta itemprop="worksFor" content="Кондитерская Хеппи">
       </div>

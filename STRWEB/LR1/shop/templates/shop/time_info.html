@@ -2,6 +2,7 @@
 {% block title %}Информация о времени{% endblock %}
 
 {% block content %}
+<div name="time">
   <h1>Информация о времени</h1>
 
   <h2>Текущие дата и время</h2>
@@ -32,6 +33,8 @@
 
   <h2>Календарь (текстовый) на {{ now_local|slice:":2" }}/{{ now_local|slice:"3:5" }}/{{ now_local|slice:"6:10" }}</h2>
   <pre style="font-family: monospace;">{{ calendar_text }}</pre>
+  <p id="pass" class="main">id = pass и class = main</p>
+</div>
 {% endblock %}
 
 {% block extra_js %}

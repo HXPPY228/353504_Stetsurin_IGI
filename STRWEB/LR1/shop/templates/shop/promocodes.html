@@ -2,45 +2,58 @@
 {% block title %}Промокоды и купоны{% endblock %}
 
 {% block content %}
+<div class="promocodes-page">
   <h1>Промокоды и купоны</h1>
-  <table border="1" cellpadding="3">
-    <tr>
-      <th id="code">Код</th>
-      <th id="discount">Скидка</th>
-      <th id="expires">Активен до</th>
-    </tr>
-    {% if active_promocodes %}
+
+  <h2>Список промокодов</h2>
+  <table class="promocode-table">
+    <thead>
       <tr>
-        <td colspan="3" style="background:#eaffea;text-align:center;font-weight:bold;">
-          Действующие промокоды
-        </td>
+        <th id="code">Код</th>
+        <th id="discount">Скидка</th>
+        <th id="expires">Активен до</th>
       </tr>
-      {% for p in active_promocodes %}
-        <tr>
-          <td headers="code">{{ p.code }}</td>
-          <td headers="discount">{{ p.discount }}%</td>
-          <td headers="expires">{{ p.expires_at|date:"d.m.Y" }}</td>
+    </thead>
+    <tbody>
+      {% if active_promocodes %}
+        <tr class="section-header">
+          <td colspan="3">Действующие промокоды</td>
         </tr>
-      {% endfor %}
-    {% endif %}
-    {% if expired_promocodes %}
-      <tr>
-        <td colspan="3" style="background:#eee;text-align:center;font-weight:bold;">
-          Истёкшие промокоды
-        </td>
-      </tr>
-      {% for p in expired_promocodes %}
-        <tr>
-          <td headers="code">{{ p.code }}</td>
-          <td headers="discount">{{ p.discount }}%</td>
-          <td headers="expires">{{ p.expires_at|date:"d.m.Y" }}</td>
+        {% for p in active_promocodes %}
+          <tr>
+            <td headers="code">{{ p.code }}</td>
+            <td headers="discount">{{ p.discount }}%</td>
+            <td headers="expires">{{ p.expires_at|date:"d.m.Y" }}</td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+
+      {% if expired_promocodes %}
+        <tr class="section-header expired">
+          <td colspan="3">Истёкшие промокоды</td>
         </tr>
-      {% endfor %}
-    {% endif %}
-    {% if not active_promocodes and not expired_promocodes %}
+        {% for p in expired_promocodes %}
+          <tr>
+            <td headers="code">{{ p.code }}</td>
+            <td headers="discount">{{ p.discount }}%</td>
+            <td headers="expires">{{ p.expires_at|date:"d.m.Y" }}</td>
+          </tr>
+        {% endfor %}
+      {% endif %}
+
+      {% if not active_promocodes and not expired_promocodes %}
+        <tr>
+          <td colspan="3">Нет промокодов.</td>
+        </tr>
+      {% endif %}
+
+      <!-- Демонстрация пустой ячейки -->
       <tr>
-        <td colspan="3">Нет промокодов.</td>
+        <td>TESTEMPTY</td>
+        <td></td>
+        <td>31.02.2025</td>
       </tr>
-    {% endif %}
+    </tbody>
   </table>
+</div>
 {% endblock %}

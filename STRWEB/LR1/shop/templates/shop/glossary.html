@@ -2,18 +2,18 @@
 {% block title %}Словарь терминов{% endblock %}
 
 {% block content %}
-  <h1>Словарь терминов и понятий</h1>
+  <h1 class="h1-center">Словарь терминов и понятий</h1>
   <dl class="glossary-list">
     {% for term in terms %}
-      <dt>
-        <a href="javascript:void(0);" class="term-toggle">
+      <details class="term-item">
+        <summary>
           <strong>{{ term.term }}</strong>
           <small>({{ term.added_at|date:"d.m.Y" }})</small>
-        </a>
-      </dt>
-      <dd class="term-definition" style="display:none;">
-        {{ term.definition|linebreaks }}
-      </dd>
+        </summary>
+        <div class="term-definition">
+          {{ term.definition|linebreaks }}
+        </div>
+      </details>
     {% empty %}
       <p>Нет терминов.</p>
     {% endfor %}
@@ -30,20 +30,4 @@
       {% endif %}
     </div>
   {% endif %}
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const toggles = document.querySelectorAll('.term-toggle');
-      toggles.forEach(function(toggle) {
-        toggle.addEventListener('click', function() {
-          const dd = this.parentElement.nextElementSibling;
-          if(dd.style.display === 'none') {
-            dd.style.display = 'block';
-          } else {
-            dd.style.display = 'none';
-          }
-        });
-      });
-    });
-  </script>
 {% endblock %}
